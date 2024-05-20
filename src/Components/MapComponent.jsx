@@ -25,7 +25,7 @@ function MapComponent() {
             'circle-fill-color': '#ffcc33',
         },
     });
-    let draw, snap; // global so we can remove them later
+    let draw, snap;
     useEffect(() => {
         const map = new Map({
             target: 'map-div',
@@ -35,20 +35,32 @@ function MapComponent() {
                 zoom: 2,
             })
         });
-    function addInteractions() {
-        draw = new Draw({
-            source: source,
-            type: 'LineString',
-        });
-        map.addInteraction(draw);
-        snap = new Snap({ source: source });
-        map.addInteraction(snap);
-        map.addInteraction(modify);
-    }
+        function addInteractions() {
+
+            draw = new Draw({
+                source: source,
+                type: 'LineString',
+
+            });
+            map.addInteraction(modify);
+            draw.on('drawstart', () => {
+                modify.setActive(false);
+            });
+
+            draw.on('drawend', () => {
+                modify.setActive(true);
+            });
+
+            map.addInteraction(draw);
+            snap = new Snap({ source: source });
+            map.addInteraction(snap);
+
+        }
         addInteractions();
 
         return () => map.setTarget(null)
     });
+
 
   return (
     <div id="map-div"></div>
