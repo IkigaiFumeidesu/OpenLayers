@@ -1,9 +1,8 @@
 import React from 'react';
 import { useEffect } from 'react';
-import View from 'ol/View.js';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
-import TileLayer from 'ol/layer/Tile.js';
+import { Draw, Modify, Snap } from 'ol/interaction.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
 
@@ -31,16 +30,25 @@ function MapComponent() {
         const map = new Map({
             target: 'map-div',
             layers: [raster, vector],
-                new TileLayer({ source: new OSM })
-            ],
             view: new View({
                 center: [0, 0],
                 zoom: 2,
             })
         });
+    function addInteractions() {
+        draw = new Draw({
+            source: source,
+            type: 'LineString',
+        });
+        map.addInteraction(draw);
+        snap = new Snap({ source: source });
+        map.addInteraction(snap);
+        map.addInteraction(modify);
+    }
+        addInteractions();
+
         return () => map.setTarget(null)
     });
-
 
   return (
     <div id="map-div"></div>
