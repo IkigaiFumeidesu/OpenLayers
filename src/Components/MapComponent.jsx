@@ -159,20 +159,24 @@ function MapComponent() {
             })
         });
         function addInteractions() {
-
+            const activeTip = 'Click to continue drawing the line';
+            const idleTip = 'Click to start drawing';
+            let tip = idleTip;
             draw = new Draw({
                 source: sourceVector,
                 type: 'LineString',
-                style: (feature) => styleFunction(feature, 'LineString')
+                style: (feature) => styleFunction(feature, 'LineString', tip)
             });
             map.addInteraction(modify);
 
             draw.on('drawstart', () => {
                 modify.setActive(false);
+                tip = activeTip;
             });
 
             draw.on('drawend', () => {
                 modify.setActive(true);
+                tip = idleTip;
             });
 
             map.addInteraction(draw);
