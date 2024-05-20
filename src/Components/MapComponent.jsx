@@ -129,6 +129,10 @@ function MapComponent() {
 
     const segmentStyles = [segmentStyle];
 
+    function styleFunction(feature, drawType) {
+
+    }
+
     const rasterLayer = new TileLayer({
         source: new OSM(),
     });
@@ -136,16 +140,12 @@ function MapComponent() {
     const sourceVector = new VectorSource();
     const modify = new Modify({ source: sourceVector });
     const snap = new Snap({ source: sourceVector });
+
     const vectorLayer = new VectorLayer({
         source: sourceVector,
-        style: {
-            'fill-color': 'rgba(255, 255, 255, 0.2)',
-            'stroke-color': '#ffcc33',
-            'stroke-width': 2,
-            'circle-radius': 7,
-            'circle-fill-color': '#ffcc33',
-        },
+        style: (feature) => styleFunction(feature)
     });
+
     let draw;
 
     // Map wants to render instantly, even if target container doesnt exist yet, reason for the use of useEffect
@@ -163,7 +163,7 @@ function MapComponent() {
             draw = new Draw({
                 source: sourceVector,
                 type: 'LineString',
-
+                style: (feature) => styleFunction(feature, 'LineString')
             });
             map.addInteraction(modify);
 
