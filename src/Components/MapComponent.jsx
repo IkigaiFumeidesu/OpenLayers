@@ -129,8 +129,17 @@ function MapComponent() {
 
     const segmentStyles = [segmentStyle];
 
-    function styleFunction(feature, drawType) {
-
+    function styleFunction(feature, drawType, tip) {
+        const styles = [];
+        const geometry = feature.getGeometry();
+        const geometryType = geometry.getType();
+        let label, point, line;
+        if (!drawType || drawType === 'LineString') {
+            styles.push(style);
+            label = lineLength(geometry);
+        }
+        console.log(drawType)
+        return styles
     }
 
     const rasterLayer = new TileLayer({
