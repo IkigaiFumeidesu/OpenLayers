@@ -148,19 +148,51 @@ function MapComponent() {
         }
         return output;
     }
-
+    let tipPoint;
 
     function styleFunction(feature, drawType, tip) {
         const styles = [];
         const geometry = feature.getGeometry();
-        const geometryType = geometry.getType();
-        let label, point, line;
-        if (!drawType || drawType === 'LineString') {
+        const type = geometry.getType();
+        let point, label, line;
+        if (!drawType || drawType === type || type === 'Point') {
             styles.push(style);
-            label = lineLength(geometry);
+            if (type === 'LineString') {
+                point = new Point(geometry.getLastCoordinate());
+                label = lineLength(geometry);
+                line = geometry;
+            }
         }
-        console.log(drawType)
-        return styles
+        if (line) {
+            let count = 0;
+            line.forEachSegment(function (a, b) {
+                const segment = new LineString([a, b]);
+                const label = lineLength(segment);
+                if (segmentStyles.length - 1 < count) {
+                    segmentStyles.push(segmentStyle.clone());
+                }
+                const segmentPoint = new Point(segment.getCoordinateAt(0.5));
+                segmentStyles[count].setGeometry(segmentPoint);
+                segmentStyles[count].getText().setText(label);
+                styles.push(segmentStyles[count]);
+                count++;
+            });
+        }
+        if (label) {
+            labelStyle.setGeometry(point);
+            labelStyle.getText().setText(label);
+            styles.push(labelStyle);
+        }
+        if (
+            tip &&
+            type === 'Point' &&
+            !modify.getOverlay().getSource().getFeatures().length
+        ) {
+            tipPoint = geometry;
+            tipStyle.getText().setText(tip);
+            styles.push(tipStyle);
+        }
+        return styles;
     }
 
     const rasterLayer = new TileLayer({
@@ -168,7 +200,7 @@ function MapComponent() {
     });
 
     const sourceVector = new VectorSource();
-    const modify = new Modify({ source: sourceVector });
+    const modify = new Modify({ source: sourceVector, style: modifyStyle});
     const snap = new Snap({ source: sourceVector });
 
     const vectorLayer = new VectorLayer({
@@ -205,13 +237,17 @@ function MapComponent() {
             });
 
             draw.on('drawend', () => {
+                modifyStyle.setGeometry(tipPoint);
                 modify.setActive(true);
                 tip = idleTip;
+                map.once('pointermove', function () {
+                    modifyStyle.setGeometry();
+                });
             });
-
             map.addInteraction(draw);
             map.addInteraction(snap);
 
+                
         }
         addInteractions();
 
