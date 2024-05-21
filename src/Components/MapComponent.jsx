@@ -129,6 +129,27 @@ function MapComponent() {
 
     const segmentStyles = [segmentStyle];
 
+    function lineLength(lineString) {
+        const length = getLength(lineString);
+        let output;
+        // Here I need a button for this to work properly
+        if ("Kms") {
+            if (length > 100) {
+                output = Math.round((length / 1000) * 100) / 100 + ' km';
+            } else {
+                output = Math.round(length * 100) / 100 + ' m';
+            }
+        } else {
+            if (length > 100) {
+                output = Math.round((length / 1000 * 1.609) * 100) / 100 + 'mile';
+            } else {
+                output = Math.round(length * 39.3700787) + 'inch';
+            }
+        }
+        return output;
+    }
+
+
     function styleFunction(feature, drawType, tip) {
         const styles = [];
         const geometry = feature.getGeometry();
