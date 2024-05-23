@@ -169,11 +169,11 @@ function MapComponent() {
     }
 
     // Function to calculate the angle between any two lines, using the azimuth
-    function calcAngleBetweenLines(coordinates) {
+    function calcAngleBetweenLines(coordinates, i) {
 
         // Get the azimuth for start-shared coords and finish-shared coords
-        const azimuthFirstLine = calcAzimuthAngle([coordinates[1], coordinates[0]]);
-        const azimuthSecondLine = calcAzimuthAngle([coordinates[1], coordinates[2]]);
+        const azimuthFirstLine = calcAzimuthAngle([coordinates[i], coordinates[i - 1]]);
+        const azimuthSecondLine = calcAzimuthAngle([coordinates[i], coordinates[i + 1]]);
         let resultingAngle = Math.abs(azimuthFirstLine - azimuthSecondLine);
 
         // The angle cannot be more than 180 degrees, to account for this:
@@ -238,12 +238,15 @@ function MapComponent() {
                 setStyleToArray(segmentArray[count], segmentPoint, lineLabel);
                 count++;
             });
-
+            console.log(count)
             // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
             if (geometryCoords.length > 2) {
-                linesAngle = "An " + calcAngleBetweenLines(geometryCoords) + " Deg";
-                linesAnglePoint = new Point(geometryCoords[1])
-                setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
+                for (let i = 1; i < count; i++) {
+                    linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i) + " Deg";
+                    linesAnglePoint = new Point(geometryCoords[i]);
+                    //console.log(geometryCoords[i + 1])
+                    setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
+                }
             }
         }
 
