@@ -63,6 +63,30 @@ function MapComponent() {
         }),
     });
 
+    const angleStyle = new Style({
+        text: new Text({
+            font: '14px Calibri,sans-serif',
+            fill: new Fill({
+                color: 'rgba(255, 255, 255, 1)',
+            }),
+            backgroundFill: new Fill({
+                color: 'rgba(0, 0, 0, 0.7)',
+            }),
+            padding: [3, 3, 3, 3],
+            textBaseline: 'bottom',
+            offsetY: -15,
+        }),
+        image: new RegularShape({
+            radius: 8,
+            points: 3,
+            angle: Math.PI,
+            displacement: [0, 10],
+            fill: new Fill({
+                color: 'rgba(0, 0, 0, 0.7)',
+            }),
+        }),
+    });
+
     const tipStyle = new Style({
         text: new Text({
             font: '12px Calibri,sans-serif',
@@ -129,8 +153,7 @@ function MapComponent() {
 
     const segmentStyles = [segmentStyle];
 
-    function lineLength(lineString) {
-        const length = getLength(lineString);
+    function lineLength(length) {
         let output;
         // Here I need a button for this to work properly
         if ("Kms") {
@@ -148,26 +171,45 @@ function MapComponent() {
         }
         return output;
     }
+
+    // Function to calculate and return Azimuth in degrees or radiants
+    function calcAzimuthAngle(coordinates) {
+
+        // Calculate differences in coordinates
+        const coordX = coordinates[1][0] - coordinates[0][0];
+        const coordY = coordinates[1][1] - coordinates[0][1];
+
+        // Calculate azimuth in Radiants then convert to degrees 
+        const azimuthRadians = Math.atan2(coordX, coordY);
+        const azimuthDegrees = azimuthRadians * 180 / Math.PI;
+
+        // Limit the azimuth to a specific range of [0, 360]
+        const azimuth = (azimuthDegrees + 360) % 360 + " Deg";
+        return azimuth
+    }
+
     let tipPoint;
 
     function styleFunction(feature, drawType, tip) {
         const styles = [];
         const geometry = feature.getGeometry();
         const type = geometry.getType();
-        let point, label, line;
+        let point, label, line, angle, anglePoint;
         if (!drawType || drawType === type || type === 'Point') {
             styles.push(style);
             if (type === 'LineString') {
                 point = new Point(geometry.getLastCoordinate());
-                label = lineLength(geometry);
+                label = lineLength(getLength(geometry));
                 line = geometry;
+                angle = calcAzimuthAngle(geometry.getCoordinates());
+                anglePoint = new Point(geometry.getFirstCoordinate());
             }
         }
         if (line) {
             let count = 0;
             line.forEachSegment(function (a, b) {
                 const segment = new LineString([a, b]);
-                const label = lineLength(segment);
+                const label = lineLength(getLength(segment));
                 if (segmentStyles.length - 1 < count) {
                     segmentStyles.push(segmentStyle.clone());
                 }
@@ -183,6 +225,12 @@ function MapComponent() {
             labelStyle.getText().setText(label);
             styles.push(labelStyle);
         }
+        if (angle) {
+            angleStyle.setGeometry(anglePoint);
+            angleStyle.getText().setText(angle);
+            styles.push(angleStyle);
+        }
+
         if (
             tip &&
             type === 'Point' &&
