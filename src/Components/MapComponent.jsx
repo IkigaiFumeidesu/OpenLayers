@@ -195,63 +195,70 @@ function MapComponent() {
 
     // Function to set style to a drawn element
     function styleFunction(feature, tip) {
-        const stylesArray = [];
-        const segmentStyles = [segmentStyle];
+
+        // stylesArray should always contain the cursor's style
+        const stylesArray = [style];
+        const segmentArray = [segmentStyle];
         let linePoint, lineLabel, angleAzimuth, anglePoint;
+
+        // Function to push style into the stylesArray
+        function setStyleToArray(style, point, label) {
+            style.setGeometry(point);
+            style.getText().setText(label);
+            stylesArray.push(style);
+        }
 
         // Get the type - Point / LineString and coords [x,y] / [[x][y], [x][y]] 
         const featureGeometry = feature.getGeometry();
         const geometryType = featureGeometry.getType();
         const geometryCoords = featureGeometry.getCoordinates();
 
-        // I want the cursor style to always be present
-        stylesArray.push(style);
-
-        // geometryType gets 2 inputs either Point or LineString 
+        // geometryType gets 2 inputs either Point or LineString
         if (geometryType === 'LineString') {
 
-            // Getting LastCoord for lineLabel, lineLabel represents the measured distance 
+            // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
             linePoint = new Point(featureGeometry.getLastCoordinate());
             lineLabel = lineLength(getLength(featureGeometry));
+            setStyleToArray(labelStyle, linePoint, lineLabel);
 
-            // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there
+            // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
             angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords);
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
-
+            setStyleToArray(angleStyle, anglePoint, angleAzimuth);
 
             let count = 0;
+            // Link for this:
+            // https://openlayers.org/en/latest/apidoc/module-ol_geom_LineString-LineString.html#forEachSegment
+            // Iterating over each segment to get the length of each to be able to display it
             featureGeometry.forEachSegment((a, b) => {
+
+                // Get first segment, construct a LineString and get its length
                 const segment = new LineString([a, b]);
                 const lineLabel = lineLength(getLength(segment));
-                if (segmentStyles.length - 1 < count) {
-                    segmentStyles.push(segmentStyle.clone());
+
+                // Case of 1 segment: this will return false, because there is already a segmentStyle present in the Array for me to work with (0 < 0)
+                // Case of more segments: after the first iteration the segmentArray still has length of 1
+                // Thats why I need a new style to be cloned into the Array so that I can perform the same methods on it and then push it into stylesArray
+                if (segmentArray.length - 1 < count) {
+                    segmentArray.push(segmentStyle.clone());
                 }
+
+                // Get a point in the middle of the segment to display the label with length data
                 const segmentPoint = new Point(segment.getCoordinateAt(0.5));
-                segmentStyles[count].setGeometry(segmentPoint);
-                segmentStyles[count].getText().setText(lineLabel);
-                stylesArray.push(segmentStyles[count]);
+                setStyleToArray(segmentArray[count], segmentPoint, lineLabel);
                 count++;
             });
 
-            // Setting the style and label to labelStyle and pushing it
-            labelStyle.setGeometry(linePoint);
-            labelStyle.getText().setText(lineLabel);
-            stylesArray.push(labelStyle);
-
-            
-            angleStyle.setGeometry(anglePoint);
-            angleStyle.getText().setText(angleAzimuth);
-            stylesArray.push(angleStyle);
-
-            // 
+            // TODO: ANGLE OF 2 LINES
             if (geometryCoords.length > 2) {
                     
             }
         }
-        if (tip && geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
+
+        // Display the tipStyle help message to the user, if they aren't modifying
+        if (geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
+            setStyleToArray(tipStyle, null, tip);
             tipPoint = featureGeometry;
-            tipStyle.getText().setText(tip);
-            stylesArray.push(tipStyle);
         }
         return stylesArray;
     }
