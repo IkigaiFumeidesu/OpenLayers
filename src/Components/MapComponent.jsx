@@ -65,31 +65,6 @@ function MapComponent() {
         }),
     });
 
-    // This style represents the Azimuth angle label
-    const angleStyle = new Style({
-        text: new Text({
-            font: '14px Calibri,sans-serif',
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 1)',
-            }),
-            backgroundFill: new Fill({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-            padding: [3, 3, 3, 3],
-            textBaseline: 'bottom',
-            offsetY: -15,
-        }),
-        image: new RegularShape({
-            radius: 8,
-            points: 3,
-            angle: Math.PI,
-            displacement: [0, 10],
-            fill: new Fill({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-        }),
-    });
-
     // This style represents the help text next to the cursor
     const tipStyle = new Style({
         text: new Text({
@@ -118,7 +93,7 @@ function MapComponent() {
             }),
         }),
         text: new Text({
-            text: 'Drag to modify',
+            text: 'Drag to modify OR right click to draw',
             font: '12px Calibri,sans-serif',
             fill: new Fill({
                 color: 'rgba(255, 255, 255, 1)',
@@ -190,7 +165,22 @@ function MapComponent() {
         const azimuthDegrees = azimuthRadians * 180 / Math.PI;
 
         // Limit the azimuth to a specific range of [0, 360]
-        return ((azimuthDegrees + 360) % 360).toFixed(2) + " Deg";
+        return ((azimuthDegrees + 360) % 360).toFixed(2);
+    }
+
+    // Function to calculate the angle between any two lines, using the azimuth
+    function calcAngleBetweenLines(coordinates) {
+
+        // Get the azimuth for start-shared coords and finish-shared coords
+        const azimuthFirstLine = calcAzimuthAngle([coordinates[1], coordinates[0]]);
+        const azimuthSecondLine = calcAzimuthAngle([coordinates[1], coordinates[2]]);
+        let resultingAngle = Math.abs(azimuthFirstLine - azimuthSecondLine);
+
+        // The angle cannot be more than 180 degrees, to account for this:
+        if (resultingAngle > 180) {
+            resultingAngle = 360 - resultingAngle;
+        }
+        return resultingAngle.toFixed(2);
     }
 
     // Function to set style to a drawn element
@@ -199,7 +189,7 @@ function MapComponent() {
         // stylesArray should always contain the cursor's style
         const stylesArray = [style];
         const segmentArray = [segmentStyle];
-        let linePoint, lineLabel, angleAzimuth, anglePoint;
+        let linePoint, lineLabel, angleAzimuth, anglePoint, linesAngle, linesAnglePoint;
 
         // Function to push style into the stylesArray
         function setStyleToArray(style, point, label) {
@@ -222,9 +212,9 @@ function MapComponent() {
             setStyleToArray(labelStyle, linePoint, lineLabel);
 
             // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
-            angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords);
+            angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + " Deg";
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
-            setStyleToArray(angleStyle, anglePoint, angleAzimuth);
+            setStyleToArray(labelStyle.clone(), anglePoint, angleAzimuth);
 
             let count = 0;
             // Link for this:
@@ -237,8 +227,8 @@ function MapComponent() {
                 const lineLabel = lineLength(getLength(segment));
 
                 // Case of 1 segment: this will return false, because there is already a segmentStyle present in the Array for me to work with (0 < 0)
-                // Case of more segments: after the first iteration the segmentArray still has length of 1
-                // Thats why I need a new style to be cloned into the Array so that I can perform the same methods on it and then push it into stylesArray
+                // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
+                // Thats why I need a new style to be cloned into the Array so that I can perform the same methods on the new one and then push it into stylesArray
                 if (segmentArray.length - 1 < count) {
                     segmentArray.push(segmentStyle.clone());
                 }
@@ -249,9 +239,11 @@ function MapComponent() {
                 count++;
             });
 
-            // TODO: ANGLE OF 2 LINES
+            // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
             if (geometryCoords.length > 2) {
-                    
+                linesAngle = "An " + calcAngleBetweenLines(geometryCoords) + " Deg";
+                linesAnglePoint = new Point(geometryCoords[1])
+                setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
             }
         }
 
@@ -330,7 +322,7 @@ function MapComponent() {
 
                 // If the user were to modify drawn element, it would display the option at the end point ONLY, this moves the label with the user's cursor
                 map.once('pointermove', function () {
-                   modifyStyle.setGeometry();
+                    modifyStyle.setGeometry();
                 });
             });
         }
