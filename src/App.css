@@ -1,11 +1,17 @@
 @import "../node_modules/ol/ol.css";
 
+* {
+    box-sizing: content-box;
+}
 body, html {
     height: 100%;
     margin: 0;
 }
 #map-div {
     height: 100vh;
+}
+.ol-zoom-in, ol-zoom-out{
+    
 }
 
 
@@ -14,4 +20,7 @@ body, html {
     z-index: 2;
     left: 0.5vw;
     top: 10vh;
+}
+.overlay-comp button {
+    padding: 0.5vh 0.5vw !important;
 }

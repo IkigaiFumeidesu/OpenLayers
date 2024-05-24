@@ -337,7 +337,8 @@ function MapComponent() {
         if (initialURL) {
             const layerURL = new TileLayer({
                 source: new XYZ({
-                    url: initialURL
+                    url: initialURL,
+                    zoom: 2
                 })
             })
 
@@ -352,7 +353,7 @@ function MapComponent() {
     return (
         <>
             <OverlayComponent sourceVector={sourceVector} setURL={setURL} />
-            <div id="map-div"></div>
+            <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)}></div>
         </>
     );
 }

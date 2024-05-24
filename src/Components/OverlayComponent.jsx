@@ -21,13 +21,16 @@ function OverlayComponent(props) {
                     <button><i className="bi bi-pencil"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => removeLastFeature()}><i className="bi bi-trash" ></i></button>
+                    <button onClick={() => removeLastFeature()}><i className="bi bi-eraser"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => props.sourceVector.clear()}><i className="bi bi-arrow-clockwise"></i></button>
+                    <button onClick={() => props.sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
                 <div>
                     <button onClick={() => createNewLayer()}><i className="bi bi-upload"></i></button>
+                </div>
+                <div>
+                    <button onClick={() => props.setURL(false)}><i className="bi bi-arrow-clockwise"></i></button>
                 </div>
             </div>
         </>
