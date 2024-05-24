@@ -15,7 +15,7 @@ import {
 } from 'ol/style.js';
 import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
-
+import OverlayComponent from './OverlayComponent';
 
 function MapComponent() {
 
@@ -238,13 +238,12 @@ function MapComponent() {
                 setStyleToArray(segmentArray[count], segmentPoint, lineLabel);
                 count++;
             });
-            console.log(count)
+
             // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
             if (geometryCoords.length > 2) {
                 for (let i = 1; i < count; i++) {
                     linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i) + " Deg";
                     linesAnglePoint = new Point(geometryCoords[i]);
-                    //console.log(geometryCoords[i + 1])
                     setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
                 }
             }
@@ -335,9 +334,12 @@ function MapComponent() {
         return () => map.setTarget(null);
     });
 
-  return (
-    <div id="map-div"></div>
-  );
+    return (
+        <>
+            <OverlayComponent sourceVector={sourceVector} />
+            <div id="map-div"></div>
+        </>
+    );
 }
 
 export default MapComponent;
