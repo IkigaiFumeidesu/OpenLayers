@@ -7,14 +7,20 @@ body, html {
     height: 100%;
     margin: 0;
 }
+/*MapComponent*/
 #map-div {
     height: 100vh;
 }
-.ol-zoom-in, ol-zoom-out{
-    
+/*Default zoom in/out buttons*/
+.ol-zoom-in, .ol-zoom-out{
+    padding: 0.4vh 0.55vw !important;
+    outline: 0.2vh solid grey !important;
+    cursor: pointer;
 }
-
-
+.ol-zoom-in:hover, .ol-zoom-out:hover {
+    background-color: rgb(128, 128, 128, 0.5);
+}
+/*OverlayComponent*/
 .overlay-comp {
     position: absolute;
     z-index: 2;
@@ -22,5 +28,9 @@ body, html {
     top: 10vh;
 }
 .overlay-comp button {
-    padding: 0.5vh 0.5vw !important;
+    padding: 0.8vh 0.8vw !important;
+    cursor: pointer;
+}
+.overlay-comp button:hover {
+    background-color: rgb(128, 128, 128, 0.5);
 }

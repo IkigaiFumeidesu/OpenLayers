@@ -15,22 +15,22 @@ function OverlayComponent(props) {
     }
 
     return (
-        <>
+        <>  
             <div className="overlay-comp">
                 <div>
-                    <button><i className="bi bi-pencil"></i></button>
+                    <button title="Draw features"><i className="bi bi-pencil"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => removeLastFeature()}><i className="bi bi-eraser"></i></button>
+                    <button title="Erase last drawn feature" onClick={() => removeLastFeature()}><i className="bi bi-eraser"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => props.sourceVector.clear()}><i className="bi bi-trash"></i></button>
+                    <button title="Clear all drawings" onClick={() => props.sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => createNewLayer()}><i className="bi bi-upload"></i></button>
+                    <button title="Display an online source" onClick={() => createNewLayer()}><i className="bi bi-upload"></i></button>
                 </div>
                 <div>
-                    <button onClick={() => props.setURL(false)}><i className="bi bi-arrow-clockwise"></i></button>
+                    <button title="Restore default layer" onClick={() => props.setURL(false)}><i className="bi bi-arrow-clockwise"></i></button>
                 </div>
             </div>
         </>
