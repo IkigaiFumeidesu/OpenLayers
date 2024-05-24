@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { Draw, Modify, Snap } from 'ol/interaction.js';
@@ -16,8 +16,11 @@ import {
 import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
 import OverlayComponent from './OverlayComponent';
+import XYZ from 'ol/source/XYZ.js';
 
 function MapComponent() {
+
+    const [initialURL, setURL] = useState(false);
 
     // This style represents the circle around user's cursor 
     const style = new Style({
@@ -330,13 +333,25 @@ function MapComponent() {
         }
         addInteractions();
 
+        // If the user gave an input, create a new layer
+        if (initialURL) {
+            const layerURL = new TileLayer({
+                source: new XYZ({
+                    url: initialURL
+                })
+            })
+
+            // I want this new layer to be UNDER vector layer, otherwise the features would be drawn below the new layer and therefore not visible
+            map.getLayers().insertAt(1, layerURL);
+        }
+
         // This is the useEffect cleanUp function
         return () => map.setTarget(null);
     });
 
     return (
         <>
-            <OverlayComponent sourceVector={sourceVector} />
+            <OverlayComponent sourceVector={sourceVector} setURL={setURL} />
             <div id="map-div"></div>
         </>
     );

@@ -12,4 +12,6 @@ body, html {
 .overlay-comp {
     position: absolute;
     z-index: 2;
+    left: 0.5vw;
+    top: 10vh;
 }
