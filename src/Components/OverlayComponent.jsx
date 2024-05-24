@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 function OverlayComponent(props) {
 
 
-    console.log(props.sourceVector.getFeatures())
+
     return (
         <>
             <div className="overlay-comp">
@@ -12,7 +12,9 @@ function OverlayComponent(props) {
                     <button><i className="bi bi-pencil"></i></button>
                 </div>
                 <div>
-                    <button><i className="bi bi-trash" onClick={() => props.sourceVector.clear()}></i></button>
+                    <button onClick={() =>
+                        props.sourceVector.removeFeature(props.sourceVector.getFeatures()[props.sourceVector.getFeatures().length - 1])}>
+                        <i className="bi bi-trash" ></i></button>
                 </div>
                 <div>
                     <button><i className="bi bi-upload"></i></button>
