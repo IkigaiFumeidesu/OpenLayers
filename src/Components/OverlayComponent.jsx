@@ -6,6 +6,18 @@ import token from '../../token.js'
 function OverlayComponent(props) {
 
     const [noInput, setInput] = useState(false);
+    const [noControls, setControls] = useState(false);
+
+    function showUserControls() {
+
+        return (
+            <>
+                <div>
+
+                </div>
+            </>
+        )
+    }
 
     // Function to remove the very last drawn feature by the user
     function removeLastFeature() {
@@ -28,7 +40,7 @@ function OverlayComponent(props) {
         setInput(false);
     }
 
-    // 
+    // By user clicking on the upload symbol this form is shown to the user
     function getUserInput() {
         return (
             <>
@@ -47,7 +59,8 @@ function OverlayComponent(props) {
         <>  
             <div className="overlay-comp">
                 <div>
-                    <button title="Draw features"><i className="bi bi-pencil"></i></button>
+                    <button title="Draw features" onClick={() => { noControls === false ? setControls(true) : setControls(false) }}><i className="bi bi-pencil"></i></button>
+                    {noControls === true && showUserControls() }
                 </div>
                 <div>
                     <button title="Erase last drawn feature" onClick={() => removeLastFeature()}><i className="bi bi-eraser"></i></button>
@@ -56,13 +69,7 @@ function OverlayComponent(props) {
                     <button title="Clear all drawings" onClick={() => props.sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
                 <div className="overlay-comp_upload_div">
-                    <button title="Display an online source" onClick={() => {
-                        if (noInput === false) {
-                            setInput(true);
-                        } else {
-                            setInput(false);
-                        }
-                    }}><i className="bi bi-upload"></i></button>
+                    <button title="Display an online source" onClick={() => {noInput === false ? setInput(true) : setInput(false)}}><i className="bi bi-upload"></i></button>
                     {noInput === true &&  getUserInput()}
                 </div>
                 <div>
