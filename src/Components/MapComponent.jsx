@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { Draw, Modify, Snap } from 'ol/interaction.js';
@@ -21,6 +21,8 @@ import XYZ from 'ol/source/XYZ.js';
 function MapComponent() {
 
     const [initialURL, setURL] = useState(false);
+    const measurementUnits = useRef("Km");
+    const angleUnits = useRef("Deg");
 
     // This style represents the circle around user's cursor 
     const style = new Style({
@@ -139,15 +141,15 @@ function MapComponent() {
     function lineLength(length) {
         let output;
         // DEV NOTE Here I need a button for this to work properly
-        if ("Kms") {
+        if (measurementUnits.current === "Km") {
             if (length > 100) {
-                output = Math.round((length / 1000) * 100) / 100 + ' km';
+                output = Math.round((length / 1000) * 100) / 100 + ' Km';
             } else {
                 output = Math.round(length * 100) / 100 + ' m';
             }
         } else {
             if (length > 100) {
-                output = Math.round((length / 1000 * 1.609) * 100) / 100 + 'mile';
+                output = Math.round((length / 1000 * 1.609) * 100) / 100 + 'Miles';
             } else {
                 output = Math.round(length * 39.3700787) + 'inch';
             }
@@ -162,13 +164,17 @@ function MapComponent() {
         const coordX = coordinates[1][0] - coordinates[0][0];
         const coordY = coordinates[1][1] - coordinates[0][1];
 
-        // Calculate azimuth in radians then convert to degrees 
-        // DEV NOTE - THIS SHOULD ALSO HAVE AN OPTION FOR CONDITIONAL CALC.
+        // Calculate azimuth in radians then convert to degrees
         const azimuthRadians = Math.atan2(coordX, coordY);
-        const azimuthDegrees = azimuthRadians * 180 / Math.PI;
+        console.log(azimuthRadians)
+        if (angleUnits.current === "Deg") {
+            const azimuthDegrees = azimuthRadians * 180 / Math.PI;
 
-        // Limit the azimuth to a specific range of [0, 360]
-        return ((azimuthDegrees + 360) % 360).toFixed(2);
+            // Limit the azimuth to a specific range of [0, 360]
+            return ((azimuthDegrees + 360) % 360).toFixed(2);
+        } else {
+            return ((azimuthRadians + 2 * Math.PI) % (2 * Math.PI)).toFixed(2);
+        }
     }
 
     // Function to calculate the angle between any two lines, using the azimuth
@@ -180,10 +186,12 @@ function MapComponent() {
         let resultingAngle = Math.abs(azimuthFirstLine - azimuthSecondLine);
 
         // The angle cannot be more than 180 degrees, to account for this:
-        if (resultingAngle > 180) {
-            resultingAngle = 360 - resultingAngle;
+        if (angleUnits.current === "Deg") {
+            resultingAngle > 180 && (resultingAngle = 360 - resultingAngle);
+        } else {
+            resultingAngle > Math.PI && (resultingAngle = 2 * Math.PI - resultingAngle);
         }
-        return resultingAngle.toFixed(2);
+        return resultingAngle.toFixed(2) + angleUnits.current;
     }
 
     // Function to set style to a drawn element
@@ -215,7 +223,7 @@ function MapComponent() {
             setStyleToArray(labelStyle, linePoint, lineLabel);
 
             // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
-            angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + " Deg";
+            angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + angleUnits.current;
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
             setStyleToArray(labelStyle.clone(), anglePoint, angleAzimuth);
 
@@ -245,7 +253,7 @@ function MapComponent() {
             // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
             if (geometryCoords.length > 2) {
                 for (let i = 1; i < count; i++) {
-                    linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i) + " Deg";
+                    linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i);
                     linesAnglePoint = new Point(geometryCoords[i]);
                     setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
                 }
@@ -337,7 +345,7 @@ function MapComponent() {
         if (initialURL) {
             const layerURL = new TileLayer({
                 source: new XYZ({
-                    url: initialURL,
+                    url: initialURL, //TODO: try and catch for invalid api call
                     zoom: 2
                 })
             })
@@ -354,6 +362,22 @@ function MapComponent() {
         <>
             <OverlayComponent sourceVector={sourceVector} setURL={setURL} />
             <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)}></div>
+            <div className="overlay-comp_units">
+                <div className="switch-field">
+                    <input type="radio" id="radio-one" name="switch-one" value="Km" defaultChecked onChange={() => measurementUnits.current = "Km"} />
+                    <label htmlFor="radio-one" title="Switch to Kilometres">Km</label>
+                    <input type="radio" id="radio-two" name="switch-one" value="Mile" onChange={() => measurementUnits.current = "Miles"} />
+                    <label htmlFor="radio-two" title="Switch to Miles">Mile</label>
+                </div>
+            </div>
+            <div className="overlay-comp_units2">
+                <div className="switch-field">
+                    <input type="radio" id="radio-three" name="switch-two" value="Deg" defaultChecked onChange={() => angleUnits.current = "Deg"} />
+                    <label htmlFor="radio-three" title="Switch to Degrees">Deg</label>
+                    <input type="radio" id="radio-fourth" name="switch-two" value="Rad" onChange={() => angleUnits.current = "Rad"} />
+                    <label htmlFor="radio-fourth" title="Switch to Radians">Rad</label>
+                </div>
+            </div>
         </>
     );
 }
