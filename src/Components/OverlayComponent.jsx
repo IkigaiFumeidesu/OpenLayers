@@ -1,17 +1,46 @@
 import React from 'react';
+import { useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import token from '../../token.js'
 
 function OverlayComponent(props) {
 
+    const [noInput, setInput] = useState(false);
 
     // Function to remove the very last drawn feature by the user
     function removeLastFeature() {
         props.sourceVector.removeFeature(props.sourceVector.getFeatures()[props.sourceVector.getFeatures().length - 1]);
     }
+
     // Function to take input from user and create a new layer and update the state
-    function createNewLayer() {
-        props.setURL("https://tile.thunderforest.com/spinal-map/{z}/{x}/{y}.png?apikey=" + token)
+    function createNewLayer(e) {
+
+        // prevent the form from refreshing the site
+        e.preventDefault();
+
+        // Getting the entry from the user
+        const dataFromInput = e.target;
+        const dataForm = new FormData(dataFromInput);
+        const objectForm = Object.fromEntries(dataForm.entries());
+
+        // Creating a new layer through the submitted input and hiding the form
+        props.setURL(objectForm.url + "?apikey=" + token);
+        setInput(false);
+    }
+
+    // 
+    function getUserInput() {
+        return (
+            <>
+                <div className="overlay-comp_upload_form">
+                    <form onSubmit={createNewLayer} method="post">
+                        <label>URL:</label>
+                        <input name="url" placeholder="Place your link"></input>
+                        <button type="submit" className="overlay-comp_upload_button">Submit</button>
+                    </form>
+                </div>
+            </>
+        )
     }
 
     return (
@@ -26,11 +55,18 @@ function OverlayComponent(props) {
                 <div>
                     <button title="Clear all drawings" onClick={() => props.sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
-                <div>
-                    <button title="Display an online source" onClick={() => createNewLayer()}><i className="bi bi-upload"></i></button>
+                <div className="overlay-comp_upload_div">
+                    <button title="Display an online source" onClick={() => {
+                        if (noInput === false) {
+                            setInput(true);
+                        } else {
+                            setInput(false);
+                        }
+                    }}><i className="bi bi-upload"></i></button>
+                    {noInput === true &&  getUserInput()}
                 </div>
                 <div>
-                    <button title="Restore default layer" onClick={() => props.setURL(false)}><i className="bi bi-arrow-clockwise"></i></button>
+                    <button title="Restore default layer" onClick={() => { props.setURL(false); setInput(false) }}><i className="bi bi-arrow-clockwise"></i></button>
                 </div>
             </div>
         </>
