@@ -25,4 +25,3 @@ dist-ssr
 obj/
 .vs/
 openlayers.esproj.user
-token.js

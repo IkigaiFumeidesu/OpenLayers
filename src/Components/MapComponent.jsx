@@ -18,21 +18,25 @@ import { LineString, Point } from 'ol/geom.js';
 import XYZ from 'ol/source/XYZ.js';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import token from '../../token.js'
+import Feature from 'ol/Feature.js';
+import { fromLonLat } from 'ol/proj';
 
 function MapComponent() {
 
     const [initialURL, setURL] = useState(false);
+
+    // User switching the Units 
     const measurementUnits = useRef("Km");
     const angleUnits = useRef("Deg");
+
+    // Instead of using states I am using refs to not erase the features
     const drawRef = useRef(null);
     const uploadRef = useRef(null);
 
-    const toggleVisibility = (clickedButton) => {
-        if (clickedButton.current.style.display === 'none') {
-            clickedButton.current.style.display = 'block';
-        } else {
-            clickedButton.current.style.display = 'none';
-        }
+    // Usage of refs assigned to divs which contains forms, making them visible, or hiding and creating focus
+    const toggleVisibility = (clickedButton, which) => {
+        clickedButton.current.style.display === 'none' ? clickedButton.current.style.display = 'block' : clickedButton.current.style.display = 'none';
+        which ? document.getElementById("x-coord").focus() : document.getElementById("input-url").focus();
     };
 
     // Function to remove the very last drawn feature by the user
@@ -54,6 +58,37 @@ function MapComponent() {
         // Creating a new layer through the submitted input and hiding the form
         setURL(objectForm.url + "?apikey=" + token);
         toggleVisibility(uploadRef);
+    }
+
+    function addUserDrawing(e) {
+
+        // Prevent the form from refreshing the site
+        e.preventDefault();
+
+        // Getting the entry from the user
+        const dataFromInput = e.target;
+        const dataForm = new FormData(dataFromInput);
+        const objectInput = Object.fromEntries(dataForm.entries());
+
+        // In case the submitted coordinates are in decimals but coming from degrees I need to transform them to Mercatory projection
+        const transformedArray = fromLonLat([objectInput.xcoord1, objectInput.ycoord1], 'EPSG:3857')
+        const inputFeature = new Feature({
+            geometry: new Point(transformedArray),
+        });
+        sourceVector.addFeature(inputFeature);
+        /*
+            The above code is unfinished, it currently can show the user a point if they fill out the first coordinate's inputs.
+            How would I continue with this:
+
+            1. I would add a select option into the form to see which units the user chooses to submit the coordinates in
+            2. Then I would expand the objectInput to take into account the change made in first point
+            3. Create an if-statemenet to handle different units to transform them into Mercatory coordinates to be able to work with them later
+            4. If the user chooses to submit azimuth and length instead of submitting a second round of coordinates, then I would make a function to reverse calculate the coordinates
+            5. With the array of coordinates I would then pass them into new LineString, defining geometry and adding style, via styleFunction, passing the coordinates as params.
+            6. add this made feature into the sourceVector layer
+
+            If by any chance the user were to create a polyline instead, I would probably do some kind of simple crud app to handle all the inputs in one go
+        */
     }
 
     // This style represents the circle around user's cursor 
@@ -371,15 +406,19 @@ function MapComponent() {
             });
         }
         addInteractions();
-
+        document.getElementById("map-div").focus();
         // If the user gave an input, create a new layer
         if (initialURL) {
             const layerURL = new TileLayer({
                 source: new XYZ({
-                    url: initialURL, //TODO: try and catch for invalid api call
+                    url: initialURL, 
                     zoom: 2
                 })
             })
+            /*
+                Yes, this lacks a try..catch error handling for invalid API calls and also probably a some kind of RegExp func.
+                And some other kinds of input checkings so that I just dont update the State for any input
+            */
 
             // I want this new layer to be UNDER vector layer, otherwise the features would be drawn below the new layer and therefore not visible
             map.getLayers().insertAt(1, layerURL);
@@ -389,9 +428,30 @@ function MapComponent() {
         return () => map.setTarget(null);
     });
 
+    // Function to handle input controls via mouse or keyboard
+    function checkKeyDown(e) {
+        //console.log(e.key)
+
+        /*
+            For keyboard input only:
+            1. Here I am thinking that using onKeyDown for the keyboard input is the way to go
+            2. Basically I'd build the system around document.getElementById("map-div").focus();
+            3. I would bind specific keys to "click" on the UI buttons, basically just call the functions, with focus being in the inputs, the user can always tab through them
+            4. For example key "D" would call the toggleVisibility(drawRef, true) and the user would see the form pop up with focus being in the first coordinate
+            5. In other cases, say remove it would be simpler - "R" and run the function
+
+            For mouse input only:
+            1. In this case I would create a set of 0-9 numbers and a dot to display at the bottom of the site for the user to click on it
+            2. Which would then pass the number into the corresponding input
+            3. Obviously, this will not work when it comes to URL link, which is why, if this actually was a real project, I would consult a possibility of using Raster Reprojection
+            4. Why? Because I find Image reprojection to be better suited for this project, I would try to cut down the amount of information the user is expected to submit to an absolute minimum
+            5. Since coordinates, angles are all just numbers without their units, I would aim for the user to be obligated to submit only these to get the image into the map
+        */
+    }
+
     return (
         <>
-            <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)}></div>
+            <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)} onKeyDown={checkKeyDown} tabIndex={0}></div>
             <div className="overlay-comp_units">
                 <div className="switch-field">
                     <input type="radio" id="radio-one" name="switch-one" defaultChecked onChange={() => measurementUnits.current = "Km"} />
@@ -409,15 +469,27 @@ function MapComponent() {
                 </div>
             </div>
             <div className="overlay-comp">
-                <div>
-                    <button title="Draw features" onClick={() => toggleVisibility(drawRef)}><i className="bi bi-pencil"></i></button>
+                <div className="overlay-comp_draw">
+                    <div>
+                        <button title="Draw features" onClick={() => toggleVisibility(drawRef, true)}><i className="bi bi-pencil"></i></button>
+                    </div>
                     <div ref={drawRef} className="overlay-comp_inputs" style={{ display: 'none' }}>
-                        <form>
-                            <input></input>
-                            <input></input>
+                        <form onSubmit={addUserDrawing}>
+                            <label htmlFor="x-coord">X coordinate</label>
+                            <input id="x-coord" name="xcoord1"></input>
+                            <label htmlFor="y-coord">Y coordinate</label>
+                            <input id="y-coord" name="ycoord1"></input>
                             <br />
-                            <input></input>
-                            <input></input>
+                            <label htmlFor="x-coord2">X coordinate</label>
+                            <input id="x-coord2" name="xcoord2"></input>
+                            <label htmlFor="y-coord2">Y coordinate</label>
+                            <input id="y-coord2" name="y-coord2"></input>
+                            <br />
+                            <label htmlFor="azimuth">Azimuth angle</label>
+                            <input id="azimuth" name="azimuth"></input>
+                            <label htmlFor="length">Length</label>
+                            <input id="length" name="length"></input>
+                            <button type="submit">Draw Line</button>
                         </form>
                     </div>
                 </div>
@@ -428,11 +500,11 @@ function MapComponent() {
                     <button title="Clear all drawings" onClick={() => sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
                 <div className="overlay-comp_upload_div">
-                    <button title="Display an online source" onClick={() => toggleVisibility(uploadRef)}><i className="bi bi-upload"></i></button>
+                    <button title="Display an online source" onClick={() => toggleVisibility(uploadRef, false)}><i className="bi bi-upload"></i></button>
                     <div ref={uploadRef} className="overlay-comp_upload_form" style={{ display: 'none' }}>
                         <form onSubmit={createNewLayer} method="post">
                             <label htmlFor="input-url">URL:</label>
-                            <input id="input-url" name="url" placeholder="Place your link"></input>
+                            <input id="input-url" name="url" placeholder="Place your link" type="url"></input>
                             <button type="submit" className="overlay-comp_upload_button">Submit</button>
                         </form>
                     </div>

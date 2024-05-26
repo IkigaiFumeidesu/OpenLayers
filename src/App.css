@@ -20,6 +20,20 @@ body, html {
 .ol-zoom-in:hover, .ol-zoom-out:hover {
     background-color: rgb(211, 211, 211, 0.8);
 }
+/*Km/Mile + Deg/Rad buttons*/
+.overlay-comp_units {
+    position: absolute;
+    z-index: 2;
+    left: 4vw;
+    top: 1.1vh;
+}
+
+.overlay-comp_units2 {
+    position: absolute;
+    z-index: 2;
+    left: 12vw;
+    top: 1.1vh;
+}
 .switch-field {
     display: flex;
 }
@@ -59,8 +73,7 @@ body, html {
     .switch-field label:last-of-type {
         border-radius: 0 0.4vh 0.4vh 0;
     }
-/*OverlayComponent*/
-
+/* The rest of the UI buttons */
 .overlay-comp {
     position: absolute;
     z-index: 2;
@@ -74,7 +87,11 @@ body, html {
     .overlay-comp button:hover {
         background-color: rgb(211, 211, 211, 0.8);
     }
-
+/* Draw button*/
+.overlay-comp_draw {
+    display: flex;
+}
+/* Upload button*/
 .overlay-comp_upload_div {
     display: flex;
 }
@@ -87,17 +104,3 @@ body, html {
         padding: 0.8vh 0;
         width: 25vw;
     }
-.overlay-comp_units {
-    position: absolute;
-    z-index: 2;
-    left: 4vw;
-    top: 1.1vh;
-}
-.overlay-comp_units2 {
-    position: absolute;
-    z-index: 2;
-    left: 12vw;
-    top: 1.1vh;
-}
-.overlay-comp_inputs {
-}
