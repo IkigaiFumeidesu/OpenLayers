@@ -15,14 +15,46 @@ import {
 } from 'ol/style.js';
 import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
-import OverlayComponent from './OverlayComponent';
 import XYZ from 'ol/source/XYZ.js';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import token from '../../token.js'
 
 function MapComponent() {
 
     const [initialURL, setURL] = useState(false);
     const measurementUnits = useRef("Km");
     const angleUnits = useRef("Deg");
+    const drawRef = useRef(null);
+    const uploadRef = useRef(null);
+
+    const toggleVisibility = (clickedButton) => {
+        if (clickedButton.current.style.display === 'none') {
+            clickedButton.current.style.display = 'block';
+        } else {
+            clickedButton.current.style.display = 'none';
+        }
+    };
+
+    // Function to remove the very last drawn feature by the user
+    function removeLastFeature() {
+        sourceVector.removeFeature(sourceVector.getFeatures()[sourceVector.getFeatures().length - 1]);
+    }
+
+    // Function to take input from user and create a new layer and update the state
+    function createNewLayer(e) {
+
+        // prevent the form from refreshing the site
+        e.preventDefault();
+
+        // Getting the entry from the user
+        const dataFromInput = e.target;
+        const dataForm = new FormData(dataFromInput);
+        const objectForm = Object.fromEntries(dataForm.entries());
+
+        // Creating a new layer through the submitted input and hiding the form
+        setURL(objectForm.url + "?apikey=" + token);
+        toggleVisibility(uploadRef);
+    }
 
     // This style represents the circle around user's cursor 
     const style = new Style({
@@ -140,7 +172,6 @@ function MapComponent() {
     // Function to calculate and switch from one measurement unit to another
     function lineLength(length) {
         let output;
-        // DEV NOTE Here I need a button for this to work properly
         if (measurementUnits.current === "Km") {
             if (length > 100) {
                 output = Math.round((length / 1000) * 100) / 100 + ' Km';
@@ -166,7 +197,7 @@ function MapComponent() {
 
         // Calculate azimuth in radians then convert to degrees
         const azimuthRadians = Math.atan2(coordX, coordY);
-        console.log(azimuthRadians)
+
         if (angleUnits.current === "Deg") {
             const azimuthDegrees = azimuthRadians * 180 / Math.PI;
 
@@ -360,22 +391,54 @@ function MapComponent() {
 
     return (
         <>
-            <OverlayComponent sourceVector={sourceVector} setURL={setURL} />
             <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)}></div>
             <div className="overlay-comp_units">
                 <div className="switch-field">
-                    <input type="radio" id="radio-one" name="switch-one" value="Km" defaultChecked onChange={() => measurementUnits.current = "Km"} />
+                    <input type="radio" id="radio-one" name="switch-one" defaultChecked onChange={() => measurementUnits.current = "Km"} />
                     <label htmlFor="radio-one" title="Switch to Kilometres">Km</label>
-                    <input type="radio" id="radio-two" name="switch-one" value="Mile" onChange={() => measurementUnits.current = "Miles"} />
+                    <input type="radio" id="radio-two" name="switch-one" onChange={() => measurementUnits.current = "Miles"} />
                     <label htmlFor="radio-two" title="Switch to Miles">Mile</label>
                 </div>
             </div>
             <div className="overlay-comp_units2">
                 <div className="switch-field">
-                    <input type="radio" id="radio-three" name="switch-two" value="Deg" defaultChecked onChange={() => angleUnits.current = "Deg"} />
+                    <input type="radio" id="radio-three" name="switch-two" defaultChecked onChange={() => angleUnits.current = "Deg"} />
                     <label htmlFor="radio-three" title="Switch to Degrees">Deg</label>
-                    <input type="radio" id="radio-fourth" name="switch-two" value="Rad" onChange={() => angleUnits.current = "Rad"} />
+                    <input type="radio" id="radio-fourth" name="switch-two" onChange={() => angleUnits.current = "Rad"} />
                     <label htmlFor="radio-fourth" title="Switch to Radians">Rad</label>
+                </div>
+            </div>
+            <div className="overlay-comp">
+                <div>
+                    <button title="Draw features" onClick={() => toggleVisibility(drawRef)}><i className="bi bi-pencil"></i></button>
+                    <div ref={drawRef} className="overlay-comp_inputs" style={{ display: 'none' }}>
+                        <form>
+                            <input></input>
+                            <input></input>
+                            <br />
+                            <input></input>
+                            <input></input>
+                        </form>
+                    </div>
+                </div>
+                <div>
+                    <button title="Erase last drawn feature" onClick={removeLastFeature}><i className="bi bi-eraser"></i></button>
+                </div>
+                <div>
+                    <button title="Clear all drawings" onClick={() => sourceVector.clear()}><i className="bi bi-trash"></i></button>
+                </div>
+                <div className="overlay-comp_upload_div">
+                    <button title="Display an online source" onClick={() => toggleVisibility(uploadRef)}><i className="bi bi-upload"></i></button>
+                    <div ref={uploadRef} className="overlay-comp_upload_form" style={{ display: 'none' }}>
+                        <form onSubmit={createNewLayer} method="post">
+                            <label htmlFor="input-url">URL:</label>
+                            <input id="input-url" name="url" placeholder="Place your link"></input>
+                            <button type="submit" className="overlay-comp_upload_button">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                <div>
+                    <button title="Restore default layer" onClick={() => setURL(false)}><i className="bi bi-arrow-clockwise"></i></button>
                 </div>
             </div>
         </>
