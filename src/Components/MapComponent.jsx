@@ -23,6 +23,7 @@ import { fromLonLat } from 'ol/proj';
 import mouseCursorStyle from './mouseCursorStyle.jsx'
 import mouseTipTextStyle from './mouseTipTextStyle.jsx'
 import geometrySegmentStyle from './geometrySegmentStyle.jsx'
+import lineLengthStyle from './lineLengthStyle.jsx'
 
 function MapComponent() {
 
@@ -93,31 +94,6 @@ function MapComponent() {
             If by any chance the user were to create a polyline instead, I would probably do some kind of simple crud app to handle all the inputs in one go
         */
     }
-
-    // This style represents the total length of a LineString shown at the LastCoordinate
-    const labelStyle = new Style({
-        text: new Text({
-            font: '14px Calibri,sans-serif',
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 1)',
-            }),
-            backgroundFill: new Fill({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-            padding: [3, 3, 3, 3],
-            textBaseline: 'bottom',
-            offsetY: -15,
-        }),
-        image: new RegularShape({
-            radius: 8,
-            points: 3,
-            angle: Math.PI,
-            displacement: [0, 10],
-            fill: new Fill({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-        }),
-    });
 
     // This style represents the modify text and change of cursor's style when cursor is on an existing drawn element
     const modifyStyle = new Style({
@@ -227,12 +203,12 @@ function MapComponent() {
             // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
             linePoint = new Point(featureGeometry.getLastCoordinate());
             lineLabel = lineLength(getLength(featureGeometry));
-            setStyleToArray(labelStyle, linePoint, lineLabel);
+            setStyleToArray(lineLengthStyle, linePoint, lineLabel);
 
             // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
             angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + angleUnits.current;
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
-            setStyleToArray(labelStyle.clone(), anglePoint, angleAzimuth);
+            setStyleToArray(lineLengthStyle.clone(), anglePoint, angleAzimuth);
 
             let count = 0;
             // Link for this:
@@ -262,7 +238,7 @@ function MapComponent() {
                 for (let i = 1; i < count; i++) {
                     linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i);
                     linesAnglePoint = new Point(geometryCoords[i]);
-                    setStyleToArray(labelStyle.clone(), linesAnglePoint, linesAngle);
+                    setStyleToArray(lineLengthStyle.clone(), linesAnglePoint, linesAngle);
                 }
             }
         }
