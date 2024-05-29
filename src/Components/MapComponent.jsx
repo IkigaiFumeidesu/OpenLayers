@@ -145,7 +145,7 @@ function MapComponent() {
     }
 
     // Function to set style to a drawn element
-    function styleFunction(feature, tip) {
+    function styleFunction(feature, textNextToCursor, ) {
 
         // stylesArray should always contain the cursor's style
         const stylesArray = [styleMouseCursorDraw];
@@ -212,7 +212,7 @@ function MapComponent() {
 
         // Display the styleMouseTipText help message to the user, if they aren't modifying
         if (geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
-            setStyleToArray(styleMouseTipText, null, tip);
+            setStyleToArray(styleMouseTipText, null, textNextToCursor);
             tipPoint = featureGeometry;
         }
         return stylesArray;
@@ -253,15 +253,15 @@ function MapComponent() {
         function addInteractions() {
 
             // Help to the user displayed next to the cursor
-            const activeTip = 'Click to continue drawing the line';
-            const idleTip = 'Click to start drawing';
-            let tip = idleTip;
+            const textActiveDrawing = 'Click to continue drawing the line';
+            const textStartDrawing = 'Click to start drawing';
+            let textNextToCursor = textStartDrawing;
 
             // Settings for drawing geometries
             draw = new Draw({
                 source: sourceVector,
                 type: 'LineString',
-                style: (feature) => styleFunction(feature, tip)
+                style: (feature) => styleFunction(feature, textNextToCursor)
             });
 
             // Adding all imported or created functionalities to the map
@@ -272,7 +272,7 @@ function MapComponent() {
             // If the user starts drawing I want to disable modify, because drawing is priority, also changing the hint
             draw.on('drawstart', () => {
                 modify.setActive(false);
-                tip = activeTip;
+                textNextToCursor = textActiveDrawing;
             });
 
             // If the user ends drawing I will switch modify back up
@@ -281,7 +281,7 @@ function MapComponent() {
                 // And I want the end point to instantly display modify, otherwise it will jump to the starting point with the modify option
                 styleMouseCursorModify.setGeometry(tipPoint);
                 modify.setActive(true);
-                tip = idleTip;
+                textNextToCursor = textStartDrawing;
 
                 // If the user were to modify drawn element, it would display the option at the end point ONLY, this moves the label with the user's cursor
                 map.once('pointermove', function () {
