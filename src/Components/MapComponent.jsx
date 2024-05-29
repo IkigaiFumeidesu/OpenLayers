@@ -21,6 +21,7 @@ import token from '../../token.js'
 import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
 import mouseCursorStyle from './mouseCursorStyle.jsx'
+import mouseTipTextStyle from './mouseTipTextStyle.jsx'
 
 function MapComponent() {
 
@@ -114,22 +115,6 @@ function MapComponent() {
             fill: new Fill({
                 color: 'rgba(0, 0, 0, 0.7)',
             }),
-        }),
-    });
-
-    // This style represents the help text next to the cursor
-    const tipStyle = new Style({
-        text: new Text({
-            font: '12px Calibri,sans-serif',
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 1)',
-            }),
-            backgroundFill: new Fill({
-                color: 'rgba(0, 0, 0, 0.4)',
-            }),
-            padding: [2, 2, 2, 2],
-            textAlign: 'left',
-            offsetX: 15,
         }),
     });
 
@@ -306,9 +291,9 @@ function MapComponent() {
             }
         }
 
-        // Display the tipStyle help message to the user, if they aren't modifying
+        // Display the mouseTipTextStyle help message to the user, if they aren't modifying
         if (geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
-            setStyleToArray(tipStyle, null, tip);
+            setStyleToArray(mouseTipTextStyle, null, tip);
             tipPoint = featureGeometry;
         }
         return stylesArray;
