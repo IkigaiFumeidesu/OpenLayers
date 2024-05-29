@@ -22,6 +22,7 @@ import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
 import mouseCursorStyle from './mouseCursorStyle.jsx'
 import mouseTipTextStyle from './mouseTipTextStyle.jsx'
+import geometrySegmentStyle from './geometrySegmentStyle.jsx'
 
 function MapComponent() {
 
@@ -144,31 +145,6 @@ function MapComponent() {
         }),
     });
 
-    // Each LineString has either 1 segment or more, and this style display as a label with the length of each one
-    const segmentStyle = new Style({
-        text: new Text({
-            font: '12px Calibri,sans-serif',
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 1)',
-            }),
-            backgroundFill: new Fill({
-                color: 'rgba(0, 0, 0, 0.4)',
-            }),
-            padding: [2, 2, 2, 2],
-            textBaseline: 'bottom',
-            offsetY: -12,
-        }),
-        image: new RegularShape({
-            radius: 6,
-            points: 3,
-            angle: Math.PI,
-            displacement: [0, 8],
-            fill: new Fill({
-                color: 'rgba(0, 0, 0, 0.4)',
-            }),
-        }),
-    });
-
     // Function to calculate and switch from one measurement unit to another
     function lineLength(length) {
         let output;
@@ -230,7 +206,7 @@ function MapComponent() {
 
         // stylesArray should always contain the cursor's style
         const stylesArray = [mouseCursorStyle];
-        const segmentArray = [segmentStyle];
+        const segmentArray = [geometrySegmentStyle];
         let linePoint, lineLabel, angleAzimuth, anglePoint, linesAngle, linesAnglePoint;
 
         // Function to push style into the stylesArray
@@ -268,11 +244,11 @@ function MapComponent() {
                 const segment = new LineString([a, b]);
                 const lineLabel = lineLength(getLength(segment));
 
-                // Case of 1 segment: this will return false, because there is already a segmentStyle present in the Array for me to work with (0 < 0)
+                // Case of 1 segment: this will return false, because there is already a geometrySegmentStyle present in the Array for me to work with (0 < 0)
                 // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
                 // Thats why I need a new style to be cloned into the Array so that I can perform the same methods on the new one and then push it into stylesArray
                 if (segmentArray.length - 1 < count) {
-                    segmentArray.push(segmentStyle.clone());
+                    segmentArray.push(geometrySegmentStyle.clone());
                 }
 
                 // Get a point in the middle of the segment to display the label with length data
