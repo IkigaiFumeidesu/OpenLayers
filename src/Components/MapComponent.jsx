@@ -5,14 +5,6 @@ import View from 'ol/View.js';
 import { Draw, Modify, Snap } from 'ol/interaction.js';
 import { OSM, Vector as VectorSource } from 'ol/source.js';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer.js';
-import {
-    Circle as CircleStyle,
-    Fill,
-    RegularShape,
-    Stroke,
-    Style,
-    Text,
-} from 'ol/style.js';
 import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
 import XYZ from 'ol/source/XYZ.js';
@@ -94,32 +86,6 @@ function MapComponent() {
             If by any chance the user were to create a polyline instead, I would probably do some kind of simple crud app to handle all the inputs in one go
         */
     }
-
-    // This style represents the modify text and change of cursor's style when cursor is on an existing drawn element
-    const modifyStyle = new Style({
-        image: new CircleStyle({
-            radius: 5,
-            stroke: new Stroke({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-            fill: new Fill({
-                color: 'rgba(0, 0, 0, 0.4)',
-            }),
-        }),
-        text: new Text({
-            text: 'Drag to modify OR right click to draw',
-            font: '12px Calibri,sans-serif',
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 1)',
-            }),
-            backgroundFill: new Fill({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-            padding: [2, 2, 2, 2],
-            textAlign: 'left',
-            offsetX: 15,
-        }),
-    });
 
     // Function to calculate and switch from one measurement unit to another
     function lineLength(length) {
@@ -264,7 +230,7 @@ function MapComponent() {
     });
 
     // Setting up imported functionalities 
-    const modify = new Modify({ source: sourceVector, style: modifyStyle});
+    const modify = new Modify({ source: sourceVector, style: mouseCursorModifyStyle});
     const snap = new Snap({ source: sourceVector });
     let draw;
     let tipPoint;
@@ -312,13 +278,13 @@ function MapComponent() {
             draw.on('drawend', () => {
 
                 // And I want the end point to instantly display modify, otherwise it will jump to the starting point with the modify option
-                modifyStyle.setGeometry(tipPoint);
+                mouseCursorModifyStyle.setGeometry(tipPoint);
                 modify.setActive(true);
                 tip = idleTip;
 
                 // If the user were to modify drawn element, it would display the option at the end point ONLY, this moves the label with the user's cursor
                 map.once('pointermove', function () {
-                    modifyStyle.setGeometry();
+                    mouseCursorModifyStyle.setGeometry();
                 });
             });
         }
