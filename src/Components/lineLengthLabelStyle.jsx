@@ -6,7 +6,7 @@ import {
 } from 'ol/style.js';
 
 // This style represents the total length of a LineString shown at the LastCoordinate
-const lineLengthStyle = new Style({
+const lineLengthLabelStyle = new Style({
     text: new Text({
         font: '14px Calibri,sans-serif',
         fill: new Fill({
@@ -30,4 +30,4 @@ const lineLengthStyle = new Style({
     }),
 });
 
-export default lineLengthStyle;
+export default lineLengthLabelStyle;

@@ -16,7 +16,7 @@ import mouseCursorDrawStyle from './mouseCursorDrawStyle.jsx'
 import mouseCursorModifyStyle from './mouseCursorModifyStyle.jsx'
 import mouseTipTextStyle from './mouseTipTextStyle.jsx'
 import geometrySegmentStyle from './geometrySegmentStyle.jsx'
-import lineLengthStyle from './lineLengthStyle.jsx'
+import lineLengthLabelStyle from './lineLengthLabelStyle.jsx'
 
 function MapComponent() {
 
@@ -170,12 +170,12 @@ function MapComponent() {
             // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
             linePoint = new Point(featureGeometry.getLastCoordinate());
             lineLabel = lineLength(getLength(featureGeometry));
-            setStyleToArray(lineLengthStyle, linePoint, lineLabel);
+            setStyleToArray(lineLengthLabelStyle, linePoint, lineLabel);
 
             // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
             angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + angleUnits.current;
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
-            setStyleToArray(lineLengthStyle.clone(), anglePoint, angleAzimuth);
+            setStyleToArray(lineLengthLabelStyle.clone(), anglePoint, angleAzimuth);
 
             let count = 0;
             // Link for this:
@@ -205,7 +205,7 @@ function MapComponent() {
                 for (let i = 1; i < count; i++) {
                     linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i);
                     linesAnglePoint = new Point(geometryCoords[i]);
-                    setStyleToArray(lineLengthStyle.clone(), linesAnglePoint, linesAngle);
+                    setStyleToArray(lineLengthLabelStyle.clone(), linesAnglePoint, linesAngle);
                 }
             }
         }
