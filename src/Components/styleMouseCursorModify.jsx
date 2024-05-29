@@ -7,7 +7,7 @@ import {
 } from 'ol/style.js';
 
 // This style represents the modify text and change of cursor's style when cursor is on an existing drawn element
-const mouseCursorModifyStyle = new Style({
+const styleMouseCursorModify = new Style({
     image: new CircleStyle({
         radius: 5,
         stroke: new Stroke({
@@ -32,4 +32,4 @@ const mouseCursorModifyStyle = new Style({
     }),
 });
 
-export default mouseCursorModifyStyle;
+export default styleMouseCursorModify;

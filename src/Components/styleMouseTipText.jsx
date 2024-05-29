@@ -5,7 +5,7 @@ import {
 } from 'ol/style.js';
 
 // This style represents the help text next to the cursor
-const mouseTipTextStyle = new Style({
+const styleMouseTipText = new Style({
     text: new Text({
         font: '12px Calibri,sans-serif',
         fill: new Fill({
@@ -20,4 +20,4 @@ const mouseTipTextStyle = new Style({
     }),
 });
 
-export default mouseTipTextStyle;
+export default styleMouseTipText;

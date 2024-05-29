@@ -6,7 +6,7 @@ import {
 } from 'ol/style.js';
 
 // Each LineString has either 1 segment or more, and this style display as a label with the length of each one
-const geometrySegmentStyle = new Style({
+const styleSegmentLabel = new Style({
     text: new Text({
         font: '12px Calibri,sans-serif',
         fill: new Fill({
@@ -30,4 +30,4 @@ const geometrySegmentStyle = new Style({
     }),
 });
 
-export default geometrySegmentStyle;
+export default styleSegmentLabel;

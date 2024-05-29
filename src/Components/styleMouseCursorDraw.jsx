@@ -6,7 +6,7 @@ import {
 } from 'ol/style.js';
 
 // This style represents the circle around user's cursor 
-const mouseCursorDrawStyle = new Style({
+const styleMouseCursorDraw = new Style({
     fill: new Fill({
         color: 'rgba(255, 255, 255, 0.2)',
     }),
@@ -26,4 +26,4 @@ const mouseCursorDrawStyle = new Style({
     }),
 });
 
-export default mouseCursorDrawStyle;
+export default styleMouseCursorDraw;

@@ -12,11 +12,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import token from '../../token.js'
 import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
-import mouseCursorDrawStyle from './mouseCursorDrawStyle.jsx'
-import mouseCursorModifyStyle from './mouseCursorModifyStyle.jsx'
-import mouseTipTextStyle from './mouseTipTextStyle.jsx'
-import geometrySegmentStyle from './geometrySegmentStyle.jsx'
-import lineLengthLabelStyle from './lineLengthLabelStyle.jsx'
+import styleMouseCursorDraw from './styleMouseCursorDraw.jsx'
+import styleMouseCursorModify from './styleMouseCursorModify.jsx'
+import styleMouseTipText from './styleMouseTipText.jsx'
+import styleSegmentLabel from './styleSegmentLabel.jsx'
+import styleLineStringLabel from './styleLineStringLabel.jsx'
 
 function MapComponent() {
 
@@ -148,8 +148,8 @@ function MapComponent() {
     function styleFunction(feature, tip) {
 
         // stylesArray should always contain the cursor's style
-        const stylesArray = [mouseCursorDrawStyle];
-        const segmentArray = [geometrySegmentStyle];
+        const stylesArray = [styleMouseCursorDraw];
+        const segmentArray = [styleSegmentLabel];
         let linePoint, lineLabel, angleAzimuth, anglePoint, linesAngle, linesAnglePoint;
 
         // Function to push style into the stylesArray
@@ -170,12 +170,12 @@ function MapComponent() {
             // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
             linePoint = new Point(featureGeometry.getLastCoordinate());
             lineLabel = lineLength(getLength(featureGeometry));
-            setStyleToArray(lineLengthLabelStyle, linePoint, lineLabel);
+            setStyleToArray(styleLineStringLabel, linePoint, lineLabel);
 
             // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
             angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + angleUnits.current;
             anglePoint = new Point(featureGeometry.getFirstCoordinate());
-            setStyleToArray(lineLengthLabelStyle.clone(), anglePoint, angleAzimuth);
+            setStyleToArray(styleLineStringLabel.clone(), anglePoint, angleAzimuth);
 
             let count = 0;
             // Link for this:
@@ -187,11 +187,11 @@ function MapComponent() {
                 const segment = new LineString([a, b]);
                 const lineLabel = lineLength(getLength(segment));
 
-                // Case of 1 segment: this will return false, because there is already a geometrySegmentStyle present in the Array for me to work with (0 < 0)
+                // Case of 1 segment: this will return false, because there is already a styleSegmentLabel present in the Array for me to work with (0 < 0)
                 // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
                 // Thats why I need a new style to be cloned into the Array so that I can perform the same methods on the new one and then push it into stylesArray
                 if (segmentArray.length - 1 < count) {
-                    segmentArray.push(geometrySegmentStyle.clone());
+                    segmentArray.push(styleSegmentLabel.clone());
                 }
 
                 // Get a point in the middle of the segment to display the label with length data
@@ -205,14 +205,14 @@ function MapComponent() {
                 for (let i = 1; i < count; i++) {
                     linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i);
                     linesAnglePoint = new Point(geometryCoords[i]);
-                    setStyleToArray(lineLengthLabelStyle.clone(), linesAnglePoint, linesAngle);
+                    setStyleToArray(styleLineStringLabel.clone(), linesAnglePoint, linesAngle);
                 }
             }
         }
 
-        // Display the mouseTipTextStyle help message to the user, if they aren't modifying
+        // Display the styleMouseTipText help message to the user, if they aren't modifying
         if (geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
-            setStyleToArray(mouseTipTextStyle, null, tip);
+            setStyleToArray(styleMouseTipText, null, tip);
             tipPoint = featureGeometry;
         }
         return stylesArray;
@@ -231,7 +231,7 @@ function MapComponent() {
     });
 
     // Setting up imported functionalities 
-    const modify = new Modify({ source: sourceVector, style: mouseCursorModifyStyle});
+    const modify = new Modify({ source: sourceVector, style: styleMouseCursorModify});
     const snap = new Snap({ source: sourceVector });
     let draw;
     let tipPoint;
@@ -279,13 +279,13 @@ function MapComponent() {
             draw.on('drawend', () => {
 
                 // And I want the end point to instantly display modify, otherwise it will jump to the starting point with the modify option
-                mouseCursorModifyStyle.setGeometry(tipPoint);
+                styleMouseCursorModify.setGeometry(tipPoint);
                 modify.setActive(true);
                 tip = idleTip;
 
                 // If the user were to modify drawn element, it would display the option at the end point ONLY, this moves the label with the user's cursor
                 map.once('pointermove', function () {
-                    mouseCursorModifyStyle.setGeometry();
+                    styleMouseCursorModify.setGeometry();
                 });
             });
         }
