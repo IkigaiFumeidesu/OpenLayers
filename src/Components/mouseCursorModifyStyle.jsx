@@ -31,3 +31,5 @@ const mouseCursorModifyStyle = new Style({
         offsetX: 15,
     }),
 });
+
+export default mouseCursorModifyStyle;

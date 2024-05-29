@@ -29,3 +29,5 @@ const lineLengthStyle = new Style({
         }),
     }),
 });
+
+export default lineLengthStyle;

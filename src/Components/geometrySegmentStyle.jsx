@@ -29,3 +29,5 @@ const geometrySegmentStyle = new Style({
         }),
     }),
 });
+
+export default geometrySegmentStyle;

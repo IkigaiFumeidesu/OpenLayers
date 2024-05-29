@@ -12,7 +12,8 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import token from '../../token.js'
 import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
-import mouseCursorStyle from './mouseCursorStyle.jsx'
+import mouseCursorDrawStyle from './mouseCursorDrawStyle.jsx'
+import mouseCursorModifyStyle from './mouseCursorModifyStyle.jsx'
 import mouseTipTextStyle from './mouseTipTextStyle.jsx'
 import geometrySegmentStyle from './geometrySegmentStyle.jsx'
 import lineLengthStyle from './lineLengthStyle.jsx'
@@ -147,7 +148,7 @@ function MapComponent() {
     function styleFunction(feature, tip) {
 
         // stylesArray should always contain the cursor's style
-        const stylesArray = [mouseCursorStyle];
+        const stylesArray = [mouseCursorDrawStyle];
         const segmentArray = [geometrySegmentStyle];
         let linePoint, lineLabel, angleAzimuth, anglePoint, linesAngle, linesAnglePoint;
 

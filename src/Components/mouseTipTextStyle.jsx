@@ -19,3 +19,5 @@ const mouseTipTextStyle = new Style({
         offsetX: 15,
     }),
 });
+
+export default mouseTipTextStyle;
