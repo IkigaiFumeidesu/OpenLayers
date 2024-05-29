@@ -20,6 +20,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import token from '../../token.js'
 import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
+import mouseCursorStyle from './mouseCursorStyle.jsx'
 
 function MapComponent() {
 
@@ -90,27 +91,6 @@ function MapComponent() {
             If by any chance the user were to create a polyline instead, I would probably do some kind of simple crud app to handle all the inputs in one go
         */
     }
-
-    // This style represents the circle around user's cursor 
-    const style = new Style({
-        fill: new Fill({
-            color: 'rgba(255, 255, 255, 0.2)',
-        }),
-        stroke: new Stroke({
-            color: 'rgba(0, 0, 0, 0.5)',
-            lineDash: [10, 10],
-            width: 2,
-        }),
-        image: new CircleStyle({
-            radius: 5,
-            stroke: new Stroke({
-                color: 'rgba(0, 0, 0, 0.7)',
-            }),
-            fill: new Fill({
-                color: 'rgba(255, 255, 255, 0.2)',
-            }),
-        }),
-    });
 
     // This style represents the total length of a LineString shown at the LastCoordinate
     const labelStyle = new Style({
@@ -264,7 +244,7 @@ function MapComponent() {
     function styleFunction(feature, tip) {
 
         // stylesArray should always contain the cursor's style
-        const stylesArray = [style];
+        const stylesArray = [mouseCursorStyle];
         const segmentArray = [segmentStyle];
         let linePoint, lineLabel, angleAzimuth, anglePoint, linesAngle, linesAnglePoint;
 
