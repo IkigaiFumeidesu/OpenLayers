@@ -6,7 +6,7 @@ import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
 
 // Function to set style to a drawn element
-function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult) {
+function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult, passedMeasureUnits, passedAngleUnits) {
 
     // stylesArray should always contain the cursor's style
     const stylesArray = [styleMouseCursorDraw];
@@ -20,7 +20,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
         stylesArray.push(style);
     }
 
-    // Get the type - Point / LineString and coords [x,y] / [[x][y], [x][y]] 
+    // Get the coords [x,y] / [[x][y], [x][y]] 
     const geometryCoords = geometryFeature.getCoordinates();
 
     // geometryType gets 2 inputs either Point or LineString
@@ -28,11 +28,11 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
         // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
         linePoint = new Point(geometryFeature.getLastCoordinate());
-        lineLabel = lineLength(getLength(geometryFeature));
+        lineLabel = lineLength(getLength(geometryFeature), passedMeasureUnits);
         setStyleToArray(styleLineStringLabel, linePoint, lineLabel);
 
         // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
-        angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords) + angleUnits.current;
+        angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords, passedAngleUnits) + passedAngleUnits;
         anglePoint = new Point(geometryFeature.getFirstCoordinate());
         setStyleToArray(styleLineStringLabel.clone(), anglePoint, angleAzimuth);
 
@@ -44,7 +44,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
             // Get first segment, construct a LineString and get its length
             const segment = new LineString([a, b]);
-            const lineLabel = lineLength(getLength(segment));
+            const lineLabel = lineLength(getLength(segment), passedMeasureUnits);
 
             // Case of 1 segment: this will return false, because there is already a styleSegmentLabel present in the Array for me to work with (0 < 0)
             // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
@@ -62,7 +62,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
         // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
         if (geometryCoords.length > 2) {
             for (let i = 1; i < count; i++) {
-                linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i);
+                linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i, passedAngleUnits);
                 linesAnglePoint = new Point(geometryCoords[i]);
                 setStyleToArray(styleLineStringLabel.clone(), linesAnglePoint, linesAngle);
             }
@@ -79,9 +79,9 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 export default setStyleToFeatures;
 
 // Function to calculate and switch from one measurement unit to another
-function lineLength(length) {
+function lineLength(length, passedMeasureUnits) {
     let output;
-    if (measurementUnits.current === "Km") {
+    if (passedMeasureUnits === "Km") {
         if (length > 100) {
             output = Math.round((length / 1000) * 100) / 100 + ' Km';
         } else {
@@ -98,7 +98,7 @@ function lineLength(length) {
 }
 
 // Function to calculate and return Azimuth in degrees or radians
-function calcAzimuthAngle(coordinates) {
+function calcAzimuthAngle(coordinates, passedAngleUnits) {
 
     // Calculate differences in coordinates
     const coordX = coordinates[1][0] - coordinates[0][0];
@@ -107,7 +107,7 @@ function calcAzimuthAngle(coordinates) {
     // Calculate azimuth in radians then convert to degrees
     const azimuthRadians = Math.atan2(coordX, coordY);
 
-    if (angleUnits.current === "Deg") {
+    if (passedAngleUnits === "Deg") {
         const azimuthDegrees = azimuthRadians * 180 / Math.PI;
 
         // Limit the azimuth to a specific range of [0, 360]
@@ -118,7 +118,7 @@ function calcAzimuthAngle(coordinates) {
 }
 
 // Function to calculate the angle between any two lines, using the azimuth
-function calcAngleBetweenLines(coordinates, i) {
+function calcAngleBetweenLines(coordinates, i, passedAngleUnits) {
 
     // Get the azimuth for start-shared coords and finish-shared coords
     const azimuthFirstLine = calcAzimuthAngle([coordinates[i], coordinates[i - 1]]);
@@ -126,10 +126,10 @@ function calcAngleBetweenLines(coordinates, i) {
     let resultingAngle = Math.abs(azimuthFirstLine - azimuthSecondLine);
 
     // The angle cannot be more than 180 degrees, to account for this:
-    if (angleUnits.current === "Deg") {
+    if (passedAngleUnits === "Deg") {
         resultingAngle > 180 && (resultingAngle = 360 - resultingAngle);
     } else {
         resultingAngle > Math.PI && (resultingAngle = 2 * Math.PI - resultingAngle);
     }
-    return resultingAngle.toFixed(2) + angleUnits.current;
+    return resultingAngle.toFixed(2) + passedAngleUnits;
 }
