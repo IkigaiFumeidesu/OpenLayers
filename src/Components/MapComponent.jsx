@@ -17,14 +17,18 @@ function MapComponent() {
 
     const [initialURL, setURL] = useState(false);
 
-    // Instead of using states I am using refs to not erase the features
-    const drawRef = useRef(null);
-    const uploadRef = useRef(null);
+    // Finding the elements associated with the clicked button and making them visible
+    const toggleFormVisibility = (clickedButtonUsage) => {
 
-    // Usage of refs assigned to divs which contains forms, making them visible, or hiding and creating focus
-    const toggleVisibility = (clickedButton, which) => {
-        clickedButton.current.style.display === 'none' ? clickedButton.current.style.display = 'block' : clickedButton.current.style.display = 'none';
-        which ? document.getElementById("x-coord").focus() : document.getElementById("input-url").focus();
+        if (clickedButtonUsage === "Draw") {
+            const drawFormStyle = document.getElementById("draw-feature_form").style;
+            drawFormStyle.display === 'none' ? drawFormStyle.display = 'block' : drawFormStyle.display = 'none';
+            document.getElementById("x-coord").focus()
+        } else {
+            const sourceFormStyle = document.getElementById("online-source_form").style;
+            sourceFormStyle.display === 'none' ? sourceFormStyle.display = 'block' : sourceFormStyle.display = 'none';
+            document.getElementById("input-url").focus();
+        }
     };
 
     // Function to remove the very last drawn feature by the user
@@ -45,7 +49,7 @@ function MapComponent() {
 
         // Creating a new layer through the submitted input and hiding the form
         setURL(objectForm.url + "?apikey=" + token);
-        toggleVisibility(uploadRef);
+        toggleFormVisibility("Source");
     }
 
     function addUserDrawing(e) {
@@ -217,7 +221,7 @@ function MapComponent() {
 
     return (
         <>
-            <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)} onKeyDown={checkKeyDown} tabIndex={0}></div>
+            <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)} onKeyDown={checkKeyDown} /*tabIndex={1}*/></div>
             <div className="overlay-comp_units">
                 <div className="switch-field">
                     <input type="radio" id="radio-one" name="switch-one" defaultChecked />
@@ -237,9 +241,9 @@ function MapComponent() {
             <div className="overlay-comp">
                 <div className="overlay-comp_draw">
                     <div>
-                        <button title="Draw features" onClick={() => toggleVisibility(drawRef, true)}><i className="bi bi-pencil"></i></button>
+                        <button title="Draw features" onClick={() => toggleFormVisibility("Draw")}><i className="bi bi-pencil"></i></button>
                     </div>
-                    <div ref={drawRef} className="overlay-comp_inputs" style={{ display: 'none' }}>
+                    <div id="draw-feature_form" className="overlay-comp_inputs" style={{ display: 'none' }}>
                         <form onSubmit={addUserDrawing}>
                             <label htmlFor="x-coord">X coordinate</label>
                             <input id="x-coord" name="xcoord1"></input>
@@ -266,8 +270,8 @@ function MapComponent() {
                     <button title="Clear all drawings" onClick={() => sourceVector.clear()}><i className="bi bi-trash"></i></button>
                 </div>
                 <div className="overlay-comp_upload_div">
-                    <button title="Display an online source" onClick={() => toggleVisibility(uploadRef, false)}><i className="bi bi-upload"></i></button>
-                    <div ref={uploadRef} className="overlay-comp_upload_form" style={{ display: 'none' }}>
+                    <button title="Display an online source" onClick={() => toggleFormVisibility("Source")}><i className="bi bi-upload"></i></button>
+                    <div id="online-source_form" className="overlay-comp_upload_form" style={{ display: 'none' }}>
                         <form onSubmit={createNewLayer} method="post">
                             <label htmlFor="input-url">URL:</label>
                             <input id="input-url" name="url" placeholder="Place your link" type="url"></input>
