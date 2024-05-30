@@ -6,6 +6,7 @@ import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
 import getLineStringLength from './getLineStringLength.jsx';
 import calcAzimuthAngle from './calcAzimuthAngle.jsx';
+import calcAngleBetweenLines from './calcAngleBetweenLines.jsx';
 
 // Function to set style to a drawn element
 function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult, passedMeasureUnits, passedAngleUnits) {
@@ -79,20 +80,3 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 }
 
 export default setStyleToFeatures;
-
-// Function to calculate the angle between any two lines, using the azimuth
-function calcAngleBetweenLines(coordinates, i, passedAngleUnits) {
-
-    // Get the azimuth for start-shared coords and finish-shared coords
-    const azimuthFirstLine = calcAzimuthAngle([coordinates[i], coordinates[i - 1]]);
-    const azimuthSecondLine = calcAzimuthAngle([coordinates[i], coordinates[i + 1]]);
-    let resultingAngle = Math.abs(azimuthFirstLine - azimuthSecondLine);
-
-    // The angle cannot be more than 180 degrees, to account for this:
-    if (passedAngleUnits === "Deg") {
-        resultingAngle > 180 && (resultingAngle = 360 - resultingAngle);
-    } else {
-        resultingAngle > Math.PI && (resultingAngle = 2 * Math.PI - resultingAngle);
-    }
-    return resultingAngle.toFixed(2) + passedAngleUnits;
-}
