@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState} from 'react';
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import { Draw, Modify, Snap } from 'ol/interaction.js';

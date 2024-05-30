@@ -4,6 +4,7 @@ import styleSegmentLabel from './styleSegmentLabel.jsx'
 import styleLineStringLabel from './styleLineStringLabel.jsx'
 import { getLength } from 'ol/sphere.js';
 import { LineString, Point } from 'ol/geom.js';
+import getLineStringLength from './getLineStringLength.jsx';
 
 // Function to set style to a drawn element
 function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult, passedMeasureUnits, passedAngleUnits) {
@@ -28,7 +29,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
         // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
         linePoint = new Point(geometryFeature.getLastCoordinate());
-        lineLabel = lineLength(getLength(geometryFeature), passedMeasureUnits);
+        lineLabel = getLineStringLength(getLength(geometryFeature), passedMeasureUnits);
         setStyleToArray(styleLineStringLabel, linePoint, lineLabel);
 
         // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
@@ -44,7 +45,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
             // Get first segment, construct a LineString and get its length
             const segment = new LineString([a, b]);
-            const lineLabel = lineLength(getLength(segment), passedMeasureUnits);
+            const lineLabel = getLineStringLength(getLength(segment), passedMeasureUnits);
 
             // Case of 1 segment: this will return false, because there is already a styleSegmentLabel present in the Array for me to work with (0 < 0)
             // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
@@ -77,25 +78,6 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 }
 
 export default setStyleToFeatures;
-
-// Function to calculate and switch from one measurement unit to another
-function lineLength(length, passedMeasureUnits) {
-    let output;
-    if (passedMeasureUnits === "Km") {
-        if (length > 100) {
-            output = Math.round((length / 1000) * 100) / 100 + ' Km';
-        } else {
-            output = Math.round(length * 100) / 100 + ' m';
-        }
-    } else {
-        if (length > 100) {
-            output = Math.round((length / 1000 * 1.609) * 100) / 100 + 'Miles';
-        } else {
-            output = Math.round(length * 39.3700787) + 'inch';
-        }
-    }
-    return output;
-}
 
 // Function to calculate and return Azimuth in degrees or radians
 function calcAzimuthAngle(coordinates, passedAngleUnits) {
