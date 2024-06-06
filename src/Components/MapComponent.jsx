@@ -242,21 +242,55 @@ function MapComponent() {
                         <button title="Draw features" onClick={() => toggleFormVisibility("Draw")}><i className="bi bi-pencil"></i></button>
                     </div>
                     <div id="draw-feature_form" className="overlay-comp_inputs" style={{ display: 'none' }}>
+                    <h3>Draw a feature</h3>
                         <form onSubmit={addUserDrawing}>
-                            <label htmlFor="x-coord">X coordinate</label>
+                        <p>[X,Y] coordinates</p>
+                            <label htmlFor="x-coord">X</label>
                             <input id="x-coord" name="xcoord1"></input>
-                            <label htmlFor="y-coord">Y coordinate</label>
+                            <select>
+                                <option>Deg</option>
+                                <option>Rad</option>
+                                <option>Km</option>
+                                <option>Miles</option>
+                            </select>
+                            <label htmlFor="y-coord">Y</label>
                             <input id="y-coord" name="ycoord1"></input>
+                            <select>
+                                <option>Deg</option>
+                                <option>Rad</option>
+                                <option>Km</option>
+                                <option>Miles</option>
+                            </select>
                             <br />
-                            <label htmlFor="x-coord2">X coordinate</label>
+                            <label htmlFor="x-coord2">X</label>
                             <input id="x-coord2" name="xcoord2"></input>
-                            <label htmlFor="y-coord2">Y coordinate</label>
+                            <select>
+                                <option>Deg</option>
+                                <option>Rad</option>
+                                <option>Km</option>
+                                <option>Miles</option>
+                            </select>
+                            <label htmlFor="y-coord2">Y</label>
                             <input id="y-coord2" name="y-coord2"></input>
+                            <select>
+                                <option>Deg</option>
+                                <option>Rad</option>
+                                <option>Km</option>
+                                <option>Miles</option>
+                            </select>
                             <br />
-                            <label htmlFor="azimuth">Azimuth angle</label>
+                            <label htmlFor="azimuth">Azimuth</label>
                             <input id="azimuth" name="azimuth"></input>
+                            <select>
+                                <option>Deg</option>
+                                <option>Rad</option>
+                            </select>
                             <label htmlFor="length">Length</label>
                             <input id="length" name="length"></input>
+                            <select>
+                                <option>Km</option>
+                                <option>Miles</option>
+                            </select>
                             <button type="submit">Draw Line</button>
                         </form>
                     </div>
