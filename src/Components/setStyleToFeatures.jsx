@@ -9,7 +9,7 @@ import calcAzimuthAngle from './calcAzimuthAngle.jsx';
 import calcAngleBetweenLines from './calcAngleBetweenLines.jsx';
 
 // Function to set style to a drawn element
-function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult, passedMeasureUnits, passedAngleUnits) {
+function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, conditionResult, measurementUnits, angleUnits) {
 
     // stylesArray should always contain the cursor's style
     const stylesArray = [styleMouseCursorDraw];
@@ -31,11 +31,11 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
         // Getting LastCoord for lineLabel, lineLabel represents the measured distance, pushing corresponding style to stylesArray
         linePoint = new Point(geometryFeature.getLastCoordinate());
-        lineLabel = getLineStringLength(getLength(geometryFeature), passedMeasureUnits);
+        lineLabel = getLineStringLength(getLength(geometryFeature), measurementUnits);
         setStyleToArray(styleLineStringLabel, linePoint, lineLabel);
 
         // Getting the Azimuth angle and getting the FirstCoord to display the AngleStyle there, pushing another style to stylesArray
-        angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords, passedAngleUnits) + passedAngleUnits;
+        angleAzimuth = "Az " + calcAzimuthAngle(geometryCoords, angleUnits) + angleUnits;
         anglePoint = new Point(geometryFeature.getFirstCoordinate());
         setStyleToArray(styleLineStringLabel.clone(), anglePoint, angleAzimuth);
 
@@ -47,7 +47,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
 
             // Get first segment, construct a LineString and get its length
             const segment = new LineString([a, b]);
-            const lineLabel = getLineStringLength(getLength(segment), passedMeasureUnits);
+            const lineLabel = getLineStringLength(getLength(segment), measurementUnits);
 
             // Case of 1 segment: this will return false, because there is already a styleSegmentLabel present in the Array for me to work with (0 < 0)
             // Case of more segments: after the first iteration the segmentArray still has length of 1, aka it still has that same style which I already changed
@@ -65,7 +65,7 @@ function setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, con
         // If there are more than 2 segments, its possible to calculate the angle between the 2 LineStrings
         if (geometryCoords.length > 2) {
             for (let i = 1; i < count; i++) {
-                linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i, passedAngleUnits);
+                linesAngle = "A " + calcAngleBetweenLines(geometryCoords, i, angleUnits);
                 linesAnglePoint = new Point(geometryCoords[i]);
                 setStyleToArray(styleLineStringLabel.clone(), linesAnglePoint, linesAngle);
             }

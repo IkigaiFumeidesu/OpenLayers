@@ -90,17 +90,15 @@ function MapComponent() {
         const geometryType = geometryFeature.getType();
 
         // Get which units are selected in the radio buttons [Kms / Miles] or [Deg / Rad]
-        const measurementUnits = document.getElementById("radio-one").checked;
-        const angleUnits = document.getElementById("radio-three").checked;
-        const passedMeasureUnits = measurementUnits ? "Km" : "Miles";
-        const passedAngleUnits = angleUnits ? "Deg" : "Rad";
+        const measurementUnits = document.getElementById("radio-one").checked ? "Km" : "Miles";
+        const angleUnits = document.getElementById("radio-three").checked ? "Deg" : "Rad";
 
         // Display the styleMouseTipText help message to the user, if they aren't modifying
         if (geometryType === 'Point' && !modify.getOverlay().getSource().getFeatures().length) {
             tipPoint = geometryFeature;
-            return setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, true, passedMeasureUnits, passedAngleUnits)
+            return setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, true, measurementUnits, angleUnits)
         } else {
-            return setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, false, passedMeasureUnits, passedAngleUnits)
+            return setStyleToFeatures(geometryFeature, geometryType, textNextToCursor, false, measurementUnits, angleUnits)
         }
     }
 
