@@ -22,11 +22,11 @@ function MapComponent() {
 
         if (clickedButtonUsage === "Draw") {
             const drawFormStyle = document.getElementById("draw-feature_form").style;
-            drawFormStyle.display === 'none' ? drawFormStyle.display = 'block' : drawFormStyle.display = 'none';
+            drawFormStyle.display === 'none' ? drawFormStyle.display = 'inline-block' : drawFormStyle.display = 'none';
             document.getElementById("x-coord").focus()
         } else {
             const sourceFormStyle = document.getElementById("online-source_form").style;
-            sourceFormStyle.display === 'none' ? sourceFormStyle.display = 'block' : sourceFormStyle.display = 'none';
+            sourceFormStyle.display === 'none' ? sourceFormStyle.display = 'inline-block' : sourceFormStyle.display = 'none';
             document.getElementById("input-url").focus();
         }
     };
@@ -238,60 +238,81 @@ function MapComponent() {
             </div>
             <div className="overlay-comp">
                 <div className="overlay-comp_draw">
-                    <div>
-                        <button title="Draw features" onClick={() => toggleFormVisibility("Draw")}><i className="bi bi-pencil"></i></button>
-                    </div>
+                    <button title="Draw features" onClick={() => toggleFormVisibility("Draw")}><i className="bi bi-pencil"></i></button>
                     <div id="draw-feature_form" className="overlay-comp_inputs" style={{ display: 'none' }}>
-                    <h3>Draw a feature</h3>
+                        <h3>Draw a feature</h3>
+                        <hr/>
                         <form onSubmit={addUserDrawing}>
-                        <p>[X,Y] coordinates</p>
-                            <label htmlFor="x-coord">X</label>
-                            <input id="x-coord" name="xcoord1"></input>
-                            <select>
-                                <option>Deg</option>
-                                <option>Rad</option>
-                                <option>Km</option>
-                                <option>Miles</option>
-                            </select>
-                            <label htmlFor="y-coord">Y</label>
-                            <input id="y-coord" name="ycoord1"></input>
-                            <select>
-                                <option>Deg</option>
-                                <option>Rad</option>
-                                <option>Km</option>
-                                <option>Miles</option>
-                            </select>
-                            <br />
-                            <label htmlFor="x-coord2">X</label>
-                            <input id="x-coord2" name="xcoord2"></input>
-                            <select>
-                                <option>Deg</option>
-                                <option>Rad</option>
-                                <option>Km</option>
-                                <option>Miles</option>
-                            </select>
-                            <label htmlFor="y-coord2">Y</label>
-                            <input id="y-coord2" name="y-coord2"></input>
-                            <select>
-                                <option>Deg</option>
-                                <option>Rad</option>
-                                <option>Km</option>
-                                <option>Miles</option>
-                            </select>
-                            <br />
-                            <label htmlFor="azimuth">Azimuth</label>
-                            <input id="azimuth" name="azimuth"></input>
-                            <select>
-                                <option>Deg</option>
-                                <option>Rad</option>
-                            </select>
-                            <label htmlFor="length">Length</label>
-                            <input id="length" name="length"></input>
-                            <select>
-                                <option>Km</option>
-                                <option>Miles</option>
-                            </select>
-                            <button type="submit">Draw Line</button>
+                            <p>Submit initial [X,Y] coordinates:</p>
+                            <div className="draw-input_initial_coords">
+                                <div>
+                                    <label htmlFor="x-coord">X: </label>
+                                    <input id="x-coord" name="xcoord1" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Deg</option>
+                                        <option>Rad</option>
+                                        <option>Km</option>
+                                        <option>Miles</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="y-coord">Y: </label>
+                                    <input id="y-coord" name="ycoord1" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Deg</option>
+                                        <option>Rad</option>
+                                        <option>Km</option>
+                                        <option>Miles</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr/>
+                            <p>Submit next [X,Y] coordinates:</p>
+                            <div className="draw-input_initial_coords">
+                                <div>
+                                    <label htmlFor="x-coord2">X: </label>
+                                    <input id="x-coord2" name="xcoord2" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Deg</option>
+                                        <option>Rad</option>
+                                        <option>Km</option>
+                                        <option>Miles</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="y-coord2">Y: </label>
+                                    <input id="y-coord2" name="y-coord2" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Deg</option>
+                                        <option>Rad</option>
+                                        <option>Km</option>
+                                        <option>Miles</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p>Or submit Azimuth and Length:</p>
+                            <div className="draw-input_initial_coords">
+                                <div>
+                                    <label htmlFor="azimuth">Az: </label>
+                                    <input id="azimuth" name="azimuth" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Deg</option>
+                                        <option>Rad</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="length">L: </label>
+                                    <input id="length" name="length" className="draw-input_coords"></input>
+                                    <select>
+                                        <option>Km</option>
+                                        <option>Miles</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div className="draw-input_initial_coords">
+                                <button type="submit">Draw Line</button>
+                            </div>
                         </form>
                     </div>
                 </div>

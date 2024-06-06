@@ -79,6 +79,7 @@ body, html {
     z-index: 2;
     left: 0.5vw;
     top: 10vh;
+    width: 25%;
 }
     .overlay-comp button {
         padding: 0.8vh 0.8vw !important;
@@ -88,8 +89,35 @@ body, html {
         background-color: rgb(211, 211, 211, 0.8);
     }
 /* Draw button*/
+#draw-feature_form {
+    background-color: white;
+    border: 0.3vh solid grey;
+    border-radius: 0.4vh;
+}
+.draw-input_initial_coords {
+    display: flex;
+    justify-content: space-evenly;
+    vertical-align: central;
+}
+.draw-input_coords {
+    width: 5vw;
+}
+.overlay-comp_inputs {
+    width: 100%;
+}
+.overlay-comp_inputs h3 {
+    margin: 1vh 0;
+    text-align: center;
+}
+.overlay-comp_inputs p {
+    text-align: center;
+    margin: 0.5vh 0;
+}
 .overlay-comp_draw {
     display: flex;
+}
+.overlay-comp_draw_div {
+    display: inline-block;
 }
 /* Upload button*/
 .overlay-comp_upload_div {
