@@ -132,7 +132,6 @@ function MapComponent() {
                 zoom: 2,
             })
         });
-
         // Function which adds imported functionalities, created ones and event listeners to the draw 
         function addInteractions() {
 
@@ -248,7 +247,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="x-coord">X: </label>
                                     <input id="x-coord" name="xcoord1" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="initial-coordinateX">
                                         <option>Deg</option>
                                         <option>Rad</option>
                                         <option>Km</option>
@@ -258,7 +257,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="y-coord">Y: </label>
                                     <input id="y-coord" name="ycoord1" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="initial-coordinateY">
                                         <option>Deg</option>
                                         <option>Rad</option>
                                         <option>Km</option>
@@ -272,7 +271,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="x-coord2">X: </label>
                                     <input id="x-coord2" name="xcoord2" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="next-coordinateX2">
                                         <option>Deg</option>
                                         <option>Rad</option>
                                         <option>Km</option>
@@ -282,7 +281,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="y-coord2">Y: </label>
                                     <input id="y-coord2" name="y-coord2" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="next-coordinateY2">
                                         <option>Deg</option>
                                         <option>Rad</option>
                                         <option>Km</option>
@@ -295,7 +294,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="azimuth">Az: </label>
                                     <input id="azimuth" name="azimuth" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="next-azimuthA2">
                                         <option>Deg</option>
                                         <option>Rad</option>
                                     </select>
@@ -303,7 +302,7 @@ function MapComponent() {
                                 <div>
                                     <label htmlFor="length">L: </label>
                                     <input id="length" name="length" className="draw-input_coords"></input>
-                                    <select>
+                                    <select name="next-lengthL2">
                                         <option>Km</option>
                                         <option>Miles</option>
                                     </select>
