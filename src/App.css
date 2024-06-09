@@ -79,7 +79,7 @@ body, html {
     z-index: 2;
     left: 0.5vw;
     top: 10vh;
-    width: 25%;
+    width: 30%;
 }
     .overlay-comp button {
         padding: 0.8vh 0.8vw !important;
@@ -98,6 +98,9 @@ body, html {
     display: flex;
     justify-content: space-evenly;
     vertical-align: central;
+}
+#draw-input_form_div {
+    max-height: 38vh;
 }
 .draw-input_coords {
     width: 5vw;
