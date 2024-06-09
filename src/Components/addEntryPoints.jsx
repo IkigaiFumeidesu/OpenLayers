@@ -1,6 +1,6 @@
 
 // Function to display selects and add extra selects as well
-function addEntryInputs(targetedForm, p = 2, inputType) {
+function addEntryInputs(targetedForm, p, inputType, measurementUnits, angleUnits) {
 
     // Searching for inputs to work with conditions below
     const getNumberOfSelects = document.getElementsByClassName("draw-input_coords");
@@ -23,8 +23,6 @@ function addEntryInputs(targetedForm, p = 2, inputType) {
                 <select name="x-selectedUnitsCoord${i}">
                     <option>Deg</option>
                     <option>Rad</option>
-                    <option>Km</option>
-                    <option>Miles</option>
                 </select>
             </div>
             <div>
@@ -33,8 +31,6 @@ function addEntryInputs(targetedForm, p = 2, inputType) {
                 <select name="y-selectedUnitsCoord${i}">
                     <option>Deg</option>
                     <option>Rad</option>
-                    <option>Km</option>
-                    <option>Miles</option>
                 </select>
             </div>
         </div>
@@ -79,7 +75,7 @@ function addEntryInputs(targetedForm, p = 2, inputType) {
             tempNode.innerHTML = coordsRender;
             targetedForm.appendChild(tempNode);
         } 
-
     }
+
 }
 export default addEntryInputs;

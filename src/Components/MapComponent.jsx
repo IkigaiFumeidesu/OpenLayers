@@ -217,6 +217,15 @@ function MapComponent() {
         */
     }
 
+    function renderDrawForm(p, newSelects) {
+
+        const drawInputForm = document.getElementById("draw-input_form_div");
+        const measurementUnits = document.getElementById("radio-one").checked ? "Km" : "Miles";
+        const angleUnits = document.getElementById("radio-three").checked ? "Deg" : "Rad";
+
+        addEntryInputs(drawInputForm, p, newSelects, measurementUnits, angleUnits);
+    }
+
     return (
         <>
             <div id="map-div" onMouseLeave={() => draw.setActive(false)} onMouseEnter={() => draw.setActive(true)} onKeyDown={checkKeyDown} /*tabIndex={1}*/></div>
@@ -238,7 +247,7 @@ function MapComponent() {
             </div>
             <div className="overlay-comp">
                 <div className="overlay-comp_draw">
-                    <button title="Draw features" onClick={() => { toggleFormVisibility("Draw"); addEntryInputs(document.getElementById("draw-input_form_div")) }}><i className="bi bi-pencil"></i></button>
+                    <button title="Draw features" onClick={() => { toggleFormVisibility("Draw"); renderDrawForm(2) }}><i className="bi bi-pencil"></i></button>
                     <div id="draw-feature_form" className="overlay-comp_inputs" style={{ display: 'none' }}>
                         <h3>Draw a feature</h3>
                         <hr/>
@@ -246,10 +255,11 @@ function MapComponent() {
                             <div id="draw-input_form_div"></div>
                             <hr/>
                             <div className="draw-input_initial_butns">
-                                <button type="button" title="Add Azimuth/Length inputs" onClick={() => addEntryInputs(document.getElementById("draw-input_form_div"), 1, "Az/Le")}>Az/Len</button>
-                                <button type="button" title="Add Coordinates inputs" onClick={() => addEntryInputs(document.getElementById("draw-input_form_div"), 1, "Coord")}>Coords</button>
+                                <button type="button" title="Add Azimuth/Length inputs" onClick={() => renderDrawForm(1, "Az/Le")}>Az/Len</button>
+                                <button type="button" title="Add Coordinates inputs" onClick={() => renderDrawForm(1, "Coord")}>Coords</button>
                                 <button type="submit" title="Draw the feature!">Draw</button>
                                 <button type="reset" title="Reset all inputs!">Reset</button>
+                                <button type="button" title="Go back" onClick={() => toggleFormVisibility("Draw")}>Go back</button>
                             </div>
                         </form>
                     </div>
