@@ -1,3 +1,4 @@
+
 // Function to display selects and add extra selects as well
 function addEntryInputs(targetedForm, p = 2) {
 
@@ -15,14 +16,11 @@ function addEntryInputs(targetedForm, p = 2) {
         // Initial set up, I need this to be called only once
         i === 0 && (targetedForm.innerHTML = "<p>Submit initial [X,Y] coordinates:</p>");
 
-        // This passes when the user calls for more inputs
-        p === 1 && (targetedForm.innerHTML += "<p>Submit next [X,Y] coordinates:</p>");
-
-        targetedForm.innerHTML +=
-        `
+        let coordsRender =
+        `${p === 1 ? "<p>Submit next [X,Y] coordinates:</p>" : ""}
         <div class="draw-input_initial_coords">
             <div>
-                <label htmlFor="x-coord${i}">X: </label>
+                <label for="x-coord${i}">X: </label>
                 <input id="x-coord${i}" name="x-coord${i}" class="draw-input_coords"></input>
                 <select name="x-selectedUnitsCoord${i}">
                     <option>Deg</option>
@@ -32,7 +30,7 @@ function addEntryInputs(targetedForm, p = 2) {
                 </select>
             </div>
             <div>
-                <label htmlFor="y-coord${i}">Y: </label>
+                <label for="y-coord${i}">Y: </label>
                 <input id="y-coord${i}" name="y-coord${i}" class="draw-input_coords"></input>
                 <select name="y-selectedUnitsCoord${i}">
                     <option>Deg</option>
@@ -43,6 +41,13 @@ function addEntryInputs(targetedForm, p = 2) {
             </div>
         </div>
         `;
+        if (i === 0) {
+            targetedForm.innerHTML += coordsRender;
+        } else {
+            let tempNode = document.createElement("newInputDiv");
+            tempNode.innerHTML = coordsRender;
+            targetedForm.appendChild(tempNode);
+        }
 
         // Adding this only on initial render
         if (i === 0) {
@@ -55,12 +60,12 @@ function addEntryInputs(targetedForm, p = 2) {
 
         // I need this to run on the first render, hence i = 1 % = 1, and then when the user calls for more inputs, p === 1 
         if (i % 2 !== 0 || p === 1) {
-            targetedForm.innerHTML +=
+            let coordsRender =
             `
              <p>Or submit Azimuth and Length:</p>
                 <div class="draw-input_initial_coords">
                     <div>
-                        <label htmlFor="azimuth${i}">Az: </label>
+                        <label for="azimuth${i}">Az: </label>
                         <input id="azimuth${i}" name="azimuth${i}" class="draw-input_coords"></input>
                         <select name="azimuth-selectedUnits${i}">
                             <option>Deg</option>
@@ -68,7 +73,7 @@ function addEntryInputs(targetedForm, p = 2) {
                         </select>
                     </div>
                     <div>
-                        <label htmlFor="length${i}">L: </label>
+                        <label for="length${i}">L: </label>
                         <input id="length${i}" name="length${i}" class="draw-input_coords"></input>
                         <select name="lenght-selectedUnits${i}">
                             <option>Km</option>
@@ -78,6 +83,9 @@ function addEntryInputs(targetedForm, p = 2) {
                 </div>
             <hr/>
             `;
+            let tempNode = document.createElement("newInputDiv");
+            tempNode.innerHTML = coordsRender;
+            targetedForm.appendChild(tempNode);
         } 
 
     }

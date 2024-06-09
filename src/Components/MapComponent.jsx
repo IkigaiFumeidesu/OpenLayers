@@ -12,7 +12,6 @@ import Feature from 'ol/Feature.js';
 import { fromLonLat } from 'ol/proj';
 import styleMouseCursorModify from './styleMouseCursorModify.jsx'
 import setStyleToFeatures from './setStyleToFeatures.jsx'
-import whatever from './addEntryPoints.jsx';
 import addEntryInputs from './addEntryPoints.jsx';
 function MapComponent() {
 
@@ -25,6 +24,7 @@ function MapComponent() {
             const drawFormStyle = document.getElementById("draw-feature_form").style;
             drawFormStyle.display === 'none' ? drawFormStyle.display = 'inline-block' : drawFormStyle.display = 'none';
             document.getElementById("draw-input_form_div").innerHTML = "";
+            document.getElementById("draw-input_form_div").style.overflowY = "hidden";
         } else {
             const sourceFormStyle = document.getElementById("online-source_form").style;
             sourceFormStyle.display === 'none' ? sourceFormStyle.display = 'inline-block' : sourceFormStyle.display = 'none';
@@ -62,13 +62,13 @@ function MapComponent() {
         const dataFromInput = e.target;
         const dataForm = new FormData(dataFromInput);
         const objectInput = Object.fromEntries(dataForm.entries());
-
+        console.log(objectInput)
         // In case the submitted coordinates are in decimals but coming from degrees I need to transform them to Mercatory projection
-        const transformedArray = fromLonLat([objectInput.xcoord1, objectInput.ycoord1], 'EPSG:3857')
+        /*const transformedArray = fromLonLat([objectInput.xcoord1, objectInput.ycoord1], 'EPSG:3857');
         const inputFeature = new Feature({
             geometry: new Point(transformedArray),
         });
-        sourceVector.addFeature(inputFeature);
+        sourceVector.addFeature(inputFeature);*/
         /*
             The above code is unfinished, it currently can show the user a point if they fill out the first coordinate's inputs.
             How would I continue with this:
@@ -245,7 +245,9 @@ function MapComponent() {
                         <form onSubmit={addUserDrawing}>
                             <div id="draw-input_form_div"></div>
                             <div className="draw-input_initial_coords">
-                                <button type="button" onClick={() => addEntryInputs(document.getElementById("draw-input_form_div"), 1)}>Fill more coords</button>
+                                <button type="button" onClick={(e) => {
+                                    e.preventDefault(); addEntryInputs(document.getElementById("draw-input_form_div"), 1)
+                                }}>Fill more coords</button>
                                 <button type="submit">Draw the feature</button>
                             </div>
                         </form>
