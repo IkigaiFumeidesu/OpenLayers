@@ -1,14 +1,11 @@
 
 // Function to display selects and add extra selects as well
-function addEntryInputs(targetedForm, p = 2) {
+function addEntryInputs(targetedForm, p = 2, inputType) {
 
     // Searching for inputs to work with conditions below
     const getNumberOfSelects = document.getElementsByClassName("draw-input_coords");
     const selectsArray = [...getNumberOfSelects].length;
-
-    if (selectsArray === 10) {
-        targetedForm.style.overflowY = "scroll";
-    }
+    selectsArray === 8 && (targetedForm.style.overflowY = "scroll");
 
     // selectsArray is initially always 0, so 0 < 2, when the user asks for more inputs, first call 6 < 7, then 10 < 11 etc. (adding 4 inputs)
     for (let i = selectsArray; i < selectsArray + p; i++) {
@@ -16,8 +13,9 @@ function addEntryInputs(targetedForm, p = 2) {
         // Initial set up, I need this to be called only once
         i === 0 && (targetedForm.innerHTML = "<p>Submit initial [X,Y] coordinates:</p>");
 
+        if (p === 2 || p === 1 && inputType === "Coord") {
         let coordsRender =
-        `${p === 1 ? "<p>Submit next [X,Y] coordinates:</p>" : ""}
+        `${p === 1 && inputType === "Coord" ? "<p>Submit [X,Y] coordinates:</p>" : ""}
         <div class="draw-input_initial_coords">
             <div>
                 <label for="x-coord${i}">X: </label>
@@ -40,27 +38,23 @@ function addEntryInputs(targetedForm, p = 2) {
                 </select>
             </div>
         </div>
+        ${ i === 0 || p === 1 && inputType === "Coord" ? "<hr/>" : ""}
         `;
-
         // innerHTML resets the inputs, using Node append instead
         let tempNode = document.createElement("newInputDiv");
         tempNode.innerHTML = coordsRender;
         targetedForm.appendChild(tempNode);
-
-        // Adding this only on initial render
-        if (i === 0) {
-            targetedForm.innerHTML +=
-            `
-            <hr/>
-            <p>Submit next [X,Y] coordinates:</p>
-            `;
         }
 
+        // Adding this only on initial render
+        i === 0 && (targetedForm.innerHTML += `<p>Submit [X,Y] coordinates:</p>`);
+        i === 1 && (targetedForm.innerHTML += `<p>OR</p>`);
+
         // I need this to run on the first render, hence i = 1 % = 1, and then when the user calls for more inputs, p === 1 
-        if (i % 2 !== 0 || p === 1) {
+        if (i % 2 !== 0 || p === 1 && inputType === "Az/Le") {
             let coordsRender =
             `
-             <p>Or submit Azimuth and Length:</p>
+             <p>Submit Azimuth and Length:</p>
                 <div class="draw-input_initial_coords">
                     <div>
                         <label for="azimuth${i}">Az: </label>

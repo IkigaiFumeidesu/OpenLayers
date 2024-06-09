@@ -244,11 +244,12 @@ function MapComponent() {
                         <hr/>
                         <form onSubmit={addUserDrawing}>
                             <div id="draw-input_form_div"></div>
-                            <div className="draw-input_initial_coords">
-                                <button type="button" onClick={(e) => {
-                                    e.preventDefault(); addEntryInputs(document.getElementById("draw-input_form_div"), 1)
-                                }}>Fill more coords</button>
-                                <button type="submit">Draw the feature</button>
+                            <hr/>
+                            <div className="draw-input_initial_butns">
+                                <button type="button" title="Add Azimuth/Length inputs" onClick={() => addEntryInputs(document.getElementById("draw-input_form_div"), 1, "Az/Le")}>Az/Len</button>
+                                <button type="button" title="Add Coordinates inputs" onClick={() => addEntryInputs(document.getElementById("draw-input_form_div"), 1, "Coord")}>Coords</button>
+                                <button type="submit" title="Draw the feature!">Draw</button>
+                                <button type="reset" title="Reset all inputs!">Reset</button>
                             </div>
                         </form>
                     </div>

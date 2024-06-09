@@ -99,6 +99,12 @@ body, html {
     justify-content: space-evenly;
     vertical-align: central;
 }
+.draw-input_initial_butns {
+    display: flex;
+    justify-content: space-evenly;
+    vertical-align: central;
+    position: sticky;
+}
 #draw-input_form_div {
     max-height: 38vh;
 }
